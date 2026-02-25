@@ -1,0 +1,13 @@
+{
+  "name": "pim2/pim-system",
+  "description": "Minimal PIM system built with PHP, MySQL, HTML, CSS and JavaScript",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "ext-pdo": "*"
+  },
+  "require-dev": {},
+  "suggest": {
+    "phpoffice/phpspreadsheet": "Install for direct .xlsx import support"
+  }
+}
