@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 final class ProductRepository
 {
+    private array $fieldMapping;
+
     public function __construct(private PDO $pdo)
     {
+        $mappingPath = __DIR__ . '/../config/field-mapping.php';
+        $this->fieldMapping = is_file($mappingPath) ? (array) require $mappingPath : ['fields' => [], 'sheets' => []];
     }
 
     public function listProducts(string $sheet = '', string $query = '', int $page = 1, int $perPage = 20): array
@@ -79,7 +83,7 @@ final class ProductRepository
 
     public function upsertProduct(array $row, string $sheetName): bool
     {
-        $normalized = $this->normalizeRow($row);
+        $normalized = $this->normalizeRow($row, $sheetName);
 
         $sku = $normalized['sku'] ?? null;
         $productName = $normalized['product_name'] ?? null;
@@ -141,7 +145,7 @@ final class ProductRepository
         ]);
     }
 
-    private function normalizeRow(array $row): array
+    private function normalizeRow(array $row, string $sheetName): array
     {
         $map = [];
         foreach ($row as $key => $value) {
@@ -149,24 +153,25 @@ final class ProductRepository
             $map[$normalizedKey] = is_string($value) ? trim($value) : $value;
         }
 
-        $sku = $map['sku'] ?? $map['varenummer'] ?? $map['itemnumber'] ?? $map['item_no'] ?? null;
-        $productName = $map['product_name'] ?? $map['name'] ?? $map['produktnavn'] ?? $map['product'] ?? null;
+        $aliases = $this->getAliasesForSheet($sheetName);
 
-        $knownKeys = [
-            'sku', 'varenummer', 'itemnumber', 'item_no',
-            'product_name', 'name', 'produktnavn', 'product',
-            'description', 'beskrivelse',
-            'category', 'kategori',
-            'price', 'pris',
-            'currency', 'valuta',
-            'weight', 'vaegt',
-            'dimensions', 'dimensioner',
-            'shipping_info', 'shipping',
-        ];
+        $sku = $this->pickMappedValue($map, $aliases, 'sku');
+        $productName = $this->pickMappedValue($map, $aliases, 'product_name');
+
+        $knownAliasKeys = [];
+        foreach ($aliases as $fieldAliases) {
+            foreach ($fieldAliases as $fieldAlias) {
+                $knownAliasKeys[$fieldAlias] = true;
+            }
+        }
+
+        foreach (array_keys($aliases) as $canonicalField) {
+            $knownAliasKeys[$canonicalField] = true;
+        }
 
         $extraData = [];
         foreach ($map as $key => $value) {
-            if (!in_array($key, $knownKeys, true)) {
+            if (!isset($knownAliasKeys[$key])) {
                 $extraData[$key] = $value;
             }
         }
@@ -174,15 +179,73 @@ final class ProductRepository
         return [
             'sku' => $sku,
             'product_name' => $productName,
-            'description' => $map['description'] ?? $map['beskrivelse'] ?? null,
-            'category' => $map['category'] ?? $map['kategori'] ?? null,
-            'price' => $map['price'] ?? $map['pris'] ?? null,
-            'currency' => $map['currency'] ?? $map['valuta'] ?? null,
-            'weight' => $map['weight'] ?? $map['vaegt'] ?? null,
-            'dimensions' => $map['dimensions'] ?? $map['dimensioner'] ?? null,
-            'shipping_info' => $map['shipping_info'] ?? $map['shipping'] ?? null,
+            'description' => $this->pickMappedValue($map, $aliases, 'description'),
+            'category' => $this->pickMappedValue($map, $aliases, 'category'),
+            'price' => $this->pickMappedValue($map, $aliases, 'price'),
+            'currency' => $this->pickMappedValue($map, $aliases, 'currency'),
+            'weight' => $this->pickMappedValue($map, $aliases, 'weight'),
+            'dimensions' => $this->pickMappedValue($map, $aliases, 'dimensions'),
+            'shipping_info' => $this->pickMappedValue($map, $aliases, 'shipping_info'),
             'extra_data' => $extraData,
         ];
+    }
+
+    private function getAliasesForSheet(string $sheetName): array
+    {
+        $global = (array) ($this->fieldMapping['fields'] ?? []);
+        $sheets = (array) ($this->fieldMapping['sheets'] ?? []);
+
+        $normalizedSheets = [];
+        foreach ($sheets as $name => $mapping) {
+            $normalizedSheets[$this->normalizeSheetName((string) $name)] = (array) $mapping;
+        }
+
+        $sheetSpecific = (array) ($normalizedSheets[$this->normalizeSheetName($sheetName)] ?? []);
+        $fields = array_unique(array_merge(array_keys($global), array_keys($sheetSpecific)));
+
+        $aliases = [];
+        foreach ($fields as $field) {
+            $merged = array_merge((array) ($sheetSpecific[$field] ?? []), (array) ($global[$field] ?? []), [$field]);
+            $normalized = [];
+            foreach ($merged as $alias) {
+                $normalizedAlias = $this->normalizeHeader((string) $alias);
+                if ($normalizedAlias !== '' && !in_array($normalizedAlias, $normalized, true)) {
+                    $normalized[] = $normalizedAlias;
+                }
+            }
+            $aliases[$field] = $normalized;
+        }
+
+        return $aliases;
+    }
+
+    private function pickMappedValue(array $map, array $aliases, string $field): mixed
+    {
+        foreach ((array) ($aliases[$field] ?? []) as $alias) {
+            if (array_key_exists($alias, $map) && $this->hasValue($map[$alias])) {
+                return $map[$alias];
+            }
+        }
+
+        return null;
+    }
+
+    private function hasValue(mixed $value): bool
+    {
+        if ($value === null) {
+            return false;
+        }
+
+        if (is_string($value) && trim($value) === '') {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function normalizeSheetName(string $sheetName): string
+    {
+        return $this->normalizeHeader($sheetName);
     }
 
     private function normalizeHeader(string $header): string
