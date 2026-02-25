@@ -1,7 +1,6 @@
 const importForm = document.getElementById('importForm');
 const importResult = document.getElementById('importResult');
-const basePath = window.location.pathname.split('/public/')[0];
-const importApiUrl = `${basePath}/public/api/import.php`;
+const importApiUrl = '/api/import.php';
 
 function setBusyState(isBusy) {
   const submitButton = importForm.querySelector('button[type="submit"]');
