@@ -122,6 +122,17 @@ select {
     margin-bottom: 0.6rem;
 }
 
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+th:first-child,
+td:first-child {
+    width: 38px;
+}
+
 .table-head h2 {
     margin: 0;
     font-size: 1.05rem;

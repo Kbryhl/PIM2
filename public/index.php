@@ -33,13 +33,17 @@
         <section class="card">
             <div class="table-head">
                 <h2>Products</h2>
-                <span id="resultInfo">Loading...</span>
+                <div class="table-actions">
+                    <button id="deleteSelectedBtn" type="button">Delete Selected</button>
+                    <span id="resultInfo">Loading...</span>
+                </div>
             </div>
 
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAllRows" aria-label="Select all rows" /></th>
                             <th>ID</th>
                             <th>Sheet</th>
                             <th>SKU</th>

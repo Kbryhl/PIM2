@@ -145,6 +145,28 @@ final class ProductRepository
         ]);
     }
 
+    public function deleteProductsByIds(array $ids): int
+    {
+        $normalizedIds = [];
+        foreach ($ids as $id) {
+            $intId = (int) $id;
+            if ($intId > 0) {
+                $normalizedIds[] = $intId;
+            }
+        }
+
+        $normalizedIds = array_values(array_unique($normalizedIds));
+        if ($normalizedIds === []) {
+            return 0;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($normalizedIds), '?'));
+        $stmt = $this->pdo->prepare("DELETE FROM products WHERE id IN ({$placeholders})");
+        $stmt->execute($normalizedIds);
+
+        return $stmt->rowCount();
+    }
+
     private function normalizeRow(array $row, string $sheetName): array
     {
         $map = [];
