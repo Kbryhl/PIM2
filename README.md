@@ -26,6 +26,8 @@ Export each important Excel tab to CSV and import:
 - Save tab `SIGDETSØDT` as CSV
 - Use `Import` page in the app
 
+The import screen now runs in chunks and shows progress (`processedRows`, `totalRows`, percentage), which is safer for larger files.
+
 ### Optional direct XLSX import
 If you want direct `.xlsx` support:
 1. Open terminal in project root.
