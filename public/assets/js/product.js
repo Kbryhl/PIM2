@@ -1,5 +1,5 @@
 const basePath = window.location.pathname.split('/public/')[0];
-const apiUrl = `${basePath}/src/api/products.php`;
+const apiUrl = `${basePath}/public/api/products.php`;
 const content = document.getElementById('productContent');
 
 async function loadProduct() {
