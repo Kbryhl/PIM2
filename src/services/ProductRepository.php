@@ -105,31 +105,22 @@ final class ProductRepository
 
     public function getDistinctSmagsvarianter(): array
     {
-        $stmt = $this->pdo->query("SELECT extra_data FROM products WHERE extra_data IS NOT NULL AND TRIM(extra_data) <> ''");
-        $rows = $stmt ? $stmt->fetchAll() : [];
+        return $this->getDistinctExtraDataList('smagsvarianter');
+    }
 
-        $variants = [];
-        foreach ($rows as $row) {
-            $raw = (string) ($row['extra_data'] ?? '');
-            if ($raw === '') {
-                continue;
-            }
+    public function getDistinctFormVarianter(): array
+    {
+        return $this->getDistinctExtraDataList('form_varianter');
+    }
 
-            $decoded = json_decode($raw, true);
-            if (!is_array($decoded)) {
-                continue;
-            }
+    public function getDistinctFolieVarianter(): array
+    {
+        return $this->getDistinctExtraDataList('folie_varianter');
+    }
 
-            $list = $this->normalizeStringList($decoded['smagsvarianter'] ?? []);
-            foreach ($list as $variant) {
-                $variants[$variant] = true;
-            }
-        }
-
-        $result = array_keys($variants);
-        natcasesort($result);
-
-        return array_values($result);
+    public function getDistinctFinishOptions(): array
+    {
+        return $this->getDistinctExtraDataList('finish');
     }
 
     public function getProductById(int $id): ?array
@@ -364,6 +355,9 @@ final class ProductRepository
             'vegan' => $this->pickMappedValue($map, $aliases, 'vegan'),
             'komposterbar' => $this->pickMappedValue($map, $aliases, 'komposterbar'),
             'smagsvarianter' => $this->pickMappedValue($map, $aliases, 'smagsvarianter'),
+            'form_varianter' => $this->pickMappedValue($map, $aliases, 'form_varianter'),
+            'folie_varianter' => $this->pickMappedValue($map, $aliases, 'folie_varianter'),
+            'finish' => $this->pickMappedValue($map, $aliases, 'finish'),
             'extra_data' => $extraData,
         ];
     }
@@ -408,6 +402,9 @@ final class ProductRepository
         $vegan = $this->toBooleanFlag($normalized['vegan'] ?? null);
         $komposterbar = $this->toBooleanFlag($normalized['komposterbar'] ?? null);
         $smagsvarianter = $this->normalizeStringList($normalized['smagsvarianter'] ?? []);
+        $formVarianter = $this->normalizeStringList($normalized['form_varianter'] ?? []);
+        $folieVarianter = $this->normalizeStringList($normalized['folie_varianter'] ?? []);
+        $finish = $this->normalizeStringList($normalized['finish'] ?? []);
 
         $sku = $this->toNullableString($normalized['sku'] ?? null);
         $productPhotoUrl = $this->buildSigdetsoedtAssetUrl($sku, 'produktfoto', 'png');
@@ -431,6 +428,9 @@ final class ProductRepository
             'vegan' => $vegan,
             'komposterbar' => $komposterbar,
             'smagsvarianter' => $smagsvarianter,
+            'form_varianter' => $formVarianter,
+            'folie_varianter' => $folieVarianter,
+            'finish' => $finish,
             'product_photo_url' => $productPhotoUrl,
             'datablad_url' => $databladUrl,
         ];
@@ -454,6 +454,9 @@ final class ProductRepository
             'vegan' => $vegan,
             'komposterbar' => $komposterbar,
             'smagsvarianter' => $smagsvarianter,
+            'form_varianter' => $formVarianter,
+            'folie_varianter' => $folieVarianter,
+            'finish' => $finish,
             'product_photo_url' => $productPhotoUrl,
             'datablad_url' => $databladUrl,
             'change_log' => $changeLog,
@@ -487,6 +490,9 @@ final class ProductRepository
             'vegan' => $this->toNullableInt($extra['vegan'] ?? null),
             'komposterbar' => $this->toNullableInt($extra['komposterbar'] ?? null),
             'smagsvarianter' => $this->normalizeStringList($extra['smagsvarianter'] ?? []),
+            'form_varianter' => $this->normalizeStringList($extra['form_varianter'] ?? []),
+            'folie_varianter' => $this->normalizeStringList($extra['folie_varianter'] ?? []),
+            'finish' => $this->normalizeStringList($extra['finish'] ?? []),
             'product_photo_url' => $this->toNullableString($extra['product_photo_url'] ?? null),
             'datablad_url' => $this->toNullableString($extra['datablad_url'] ?? null),
         ];
@@ -517,6 +523,9 @@ final class ProductRepository
             'vegan' => 'Vegan',
             'komposterbar' => 'Komposterbar',
             'smagsvarianter' => 'Smagsvarianter',
+            'form_varianter' => 'Form varianter',
+            'folie_varianter' => 'Folie varianter',
+            'finish' => 'Finish',
             'product_photo_url' => 'Product Photo',
             'datablad_url' => 'Datablad',
         ];
@@ -741,6 +750,35 @@ final class ProductRepository
         }
 
         return array_values(array_keys($normalized));
+    }
+
+    private function getDistinctExtraDataList(string $key): array
+    {
+        $stmt = $this->pdo->query("SELECT extra_data FROM products WHERE extra_data IS NOT NULL AND TRIM(extra_data) <> ''");
+        $rows = $stmt ? $stmt->fetchAll() : [];
+
+        $variants = [];
+        foreach ($rows as $row) {
+            $raw = (string) ($row['extra_data'] ?? '');
+            if ($raw === '') {
+                continue;
+            }
+
+            $decoded = json_decode($raw, true);
+            if (!is_array($decoded)) {
+                continue;
+            }
+
+            $list = $this->normalizeStringList($decoded[$key] ?? []);
+            foreach ($list as $variant) {
+                $variants[$variant] = true;
+            }
+        }
+
+        $result = array_keys($variants);
+        natcasesort($result);
+
+        return array_values($result);
     }
 
     private function valuesDiffer(mixed $before, mixed $after): bool

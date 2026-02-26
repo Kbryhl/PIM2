@@ -59,6 +59,9 @@ try {
                 'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
                 'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
                 'smagsvarianter' => $payload['smagsvarianter'] ?? $_POST['smagsvarianter'] ?? [],
+                'form_varianter' => $payload['form_varianter'] ?? $_POST['form_varianter'] ?? [],
+                'folie_varianter' => $payload['folie_varianter'] ?? $_POST['folie_varianter'] ?? [],
+                'finish' => $payload['finish'] ?? $_POST['finish'] ?? [],
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
@@ -94,6 +97,9 @@ try {
                     'product_photo_url' => $savedExtraData['product_photo_url'] ?? null,
                     'datablad_url' => $savedExtraData['datablad_url'] ?? null,
                     'smagsvarianter' => $savedExtraData['smagsvarianter'] ?? [],
+                    'form_varianter' => $savedExtraData['form_varianter'] ?? [],
+                    'folie_varianter' => $savedExtraData['folie_varianter'] ?? [],
+                    'finish' => $savedExtraData['finish'] ?? [],
                 ],
             ]);
             exit;
@@ -124,6 +130,9 @@ try {
                 'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
                 'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
                 'smagsvarianter' => $payload['smagsvarianter'] ?? $_POST['smagsvarianter'] ?? [],
+                'form_varianter' => $payload['form_varianter'] ?? $_POST['form_varianter'] ?? [],
+                'folie_varianter' => $payload['folie_varianter'] ?? $_POST['folie_varianter'] ?? [],
+                'finish' => $payload['finish'] ?? $_POST['finish'] ?? [],
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
@@ -160,6 +169,9 @@ try {
                     'product_photo_url' => $updatedExtraData['product_photo_url'] ?? null,
                     'datablad_url' => $updatedExtraData['datablad_url'] ?? null,
                     'smagsvarianter' => $updatedExtraData['smagsvarianter'] ?? [],
+                    'form_varianter' => $updatedExtraData['form_varianter'] ?? [],
+                    'folie_varianter' => $updatedExtraData['folie_varianter'] ?? [],
+                    'finish' => $updatedExtraData['finish'] ?? [],
                 ],
             ]);
             exit;
@@ -198,6 +210,33 @@ try {
         echo json_encode([
             'data' => [
                 'smagsvarianter' => $repository->getDistinctSmagsvarianter(),
+            ],
+        ]);
+        exit;
+    }
+
+    if (isset($_GET['formvarianter'])) {
+        echo json_encode([
+            'data' => [
+                'formvarianter' => $repository->getDistinctFormVarianter(),
+            ],
+        ]);
+        exit;
+    }
+
+    if (isset($_GET['folievarianter'])) {
+        echo json_encode([
+            'data' => [
+                'folievarianter' => $repository->getDistinctFolieVarianter(),
+            ],
+        ]);
+        exit;
+    }
+
+    if (isset($_GET['finish'])) {
+        echo json_encode([
+            'data' => [
+                'finish' => $repository->getDistinctFinishOptions(),
             ],
         ]);
         exit;

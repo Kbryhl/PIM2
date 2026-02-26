@@ -70,6 +70,15 @@ return [
         'smagsvarianter' => [
             'smagsvarianter', 'smagsvariant', 'flavor_variants', 'flavours', 'flavors',
         ],
+        'form_varianter' => [
+            'form_varianter', 'formvarianter', 'shape_variants',
+        ],
+        'folie_varianter' => [
+            'folie_varianter', 'folievarianter', 'foil_variants',
+        ],
+        'finish' => [
+            'finish', 'finish_variants',
+        ],
     ],
     'sheets' => [
         'aquadana' => [
@@ -106,6 +115,9 @@ return [
             'vegan' => ['sigdetsoedt_vegan', 'vegan'],
             'komposterbar' => ['sigdetsoedt_komposterbar', 'komposterbar'],
             'smagsvarianter' => ['sigdetsoedt_smagsvarianter', 'smagsvarianter', 'flavor_variants'],
+            'form_varianter' => ['sigdetsoedt_form_varianter', 'form_varianter', 'formvarianter'],
+            'folie_varianter' => ['sigdetsoedt_folie_varianter', 'folie_varianter', 'folievarianter'],
+            'finish' => ['sigdetsoedt_finish', 'finish'],
         ],
     ],
 ];

@@ -99,6 +99,27 @@
                     <button id="addSmagsvariantBtn" type="button">Add Smagsvariant</button>
                 </div>
 
+                <label for="formVarianterSelect">Form varianter (multi-select)</label>
+                <select id="formVarianterSelect" name="form_varianter" multiple size="8"></select>
+                <div class="inline-row">
+                    <input id="newFormVariantInput" type="text" placeholder="Add new form variant" />
+                    <button id="addFormVariantBtn" type="button">Add Form Variant</button>
+                </div>
+
+                <label for="folieVarianterSelect">Folie varianter (multi-select)</label>
+                <select id="folieVarianterSelect" name="folie_varianter" multiple size="8"></select>
+                <div class="inline-row">
+                    <input id="newFolieVariantInput" type="text" placeholder="Add new folie variant" />
+                    <button id="addFolieVariantBtn" type="button">Add Folie Variant</button>
+                </div>
+
+                <label for="finishSelect">Finish (multi-select)</label>
+                <select id="finishSelect" name="finish" multiple size="8"></select>
+                <div class="inline-row">
+                    <input id="newFinishInput" type="text" placeholder="Add new finish" />
+                    <button id="addFinishBtn" type="button">Add Finish</button>
+                </div>
+
                 <label for="productPhotoUrl">Product Photo URL (read only)</label>
                 <input id="productPhotoUrl" name="product_photo_url" type="url" readonly placeholder="https://filbank.dk/database/sigdetsoedt/produktfoto/SKU.png" />
 

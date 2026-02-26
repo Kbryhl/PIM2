@@ -9,6 +9,15 @@ const addCategoryBtn = document.getElementById('addCategoryBtn');
 const smagsvarianterSelect = document.getElementById('smagsvarianterSelect');
 const newSmagsvariantInput = document.getElementById('newSmagsvariantInput');
 const addSmagsvariantBtn = document.getElementById('addSmagsvariantBtn');
+const formVarianterSelect = document.getElementById('formVarianterSelect');
+const newFormVariantInput = document.getElementById('newFormVariantInput');
+const addFormVariantBtn = document.getElementById('addFormVariantBtn');
+const folieVarianterSelect = document.getElementById('folieVarianterSelect');
+const newFolieVariantInput = document.getElementById('newFolieVariantInput');
+const addFolieVariantBtn = document.getElementById('addFolieVariantBtn');
+const finishSelect = document.getElementById('finishSelect');
+const newFinishInput = document.getElementById('newFinishInput');
+const addFinishBtn = document.getElementById('addFinishBtn');
 
 const readOnlyExtraFields = new Set([
   'change_log',
@@ -77,6 +86,10 @@ function getSelectedCategories() {
 
 function getSelectedSmagsvarianter() {
   return Array.from(smagsvarianterSelect.selectedOptions).map((option) => option.value).filter(Boolean);
+}
+
+function getSelectedOptions(selectElement) {
+  return Array.from(selectElement.selectedOptions).map((option) => option.value).filter(Boolean);
 }
 
 function ensureCategoryOption(category, selected = false) {
@@ -171,6 +184,64 @@ addSmagsvariantBtn.addEventListener('click', () => {
   newSmagsvariantInput.value = '';
 });
 
+function ensureOption(selectElement, value, selected = false) {
+  const label = String(value || '').trim();
+  if (!label) return;
+
+  const existing = Array.from(selectElement.options).find((opt) => opt.value.toLowerCase() === label.toLowerCase());
+  if (existing) {
+    existing.selected = selected || existing.selected;
+    return;
+  }
+
+  const option = document.createElement('option');
+  option.value = label;
+  option.textContent = label;
+  option.selected = selected;
+  selectElement.appendChild(option);
+}
+
+async function loadReusableList(queryKey, responseKey, selectElement, initialSelected = []) {
+  try {
+    const response = await fetch(`${apiUrl}?${queryKey}=1`);
+    const payload = await response.json();
+    if (!response.ok || !payload.data) {
+      return;
+    }
+
+    const options = Array.isArray(payload.data[responseKey]) ? payload.data[responseKey] : [];
+    selectElement.innerHTML = '';
+    for (const option of options) {
+      ensureOption(selectElement, option, false);
+    }
+    for (const selected of initialSelected) {
+      ensureOption(selectElement, selected, true);
+    }
+  } catch {
+  }
+}
+
+addFormVariantBtn.addEventListener('click', () => {
+  const value = String(newFormVariantInput.value || '').trim();
+  if (!value) return;
+  ensureOption(formVarianterSelect, value, true);
+  newFormVariantInput.value = '';
+});
+
+addFolieVariantBtn.addEventListener('click', () => {
+  const value = String(newFolieVariantInput.value || '').trim();
+  if (!value) return;
+  ensureOption(folieVarianterSelect, value, true);
+  newFolieVariantInput.value = '';
+});
+
+addFinishBtn.addEventListener('click', () => {
+  const value = String(newFinishInput.value || '').trim();
+  if (!value) return;
+  ensureOption(finishSelect, value, true);
+  newFinishInput.value = '';
+});
+
 function toBoolean(value) {
   if (value === true || value === 1) return true;
   const str = String(value ?? '').toLowerCase().trim();
@@ -250,6 +321,9 @@ function applyProductToForm(product) {
 
   const extra = (product.extra_data && typeof product.extra_data === 'object') ? product.extra_data : {};
   const selectedSmagsvarianter = parseList(extra.smagsvarianter || []);
+  const selectedFormVarianter = parseList(extra.form_varianter || []);
+  const selectedFolieVarianter = parseList(extra.folie_varianter || []);
+  const selectedFinish = parseList(extra.finish || []);
 
   document.getElementById('active').checked = toBoolean(extra.active ?? false);
   document.getElementById('barcode').value = String(extra.barcode ?? '');
@@ -265,6 +339,9 @@ function applyProductToForm(product) {
   document.getElementById('komposterbar').checked = toBoolean(extra.komposterbar ?? false);
   changeLogInput.value = String(extra.change_log ?? '');
   loadSmagsvarianterOptions(selectedSmagsvarianter);
+  loadReusableList('formvarianter', 'formvarianter', formVarianterSelect, selectedFormVarianter);
+  loadReusableList('folievarianter', 'folievarianter', folieVarianterSelect, selectedFolieVarianter);
+  loadReusableList('finish', 'finish', finishSelect, selectedFinish);
 
   dynamicFieldsContainer.innerHTML = '';
   for (const [key, value] of Object.entries(extra)) {
@@ -332,6 +409,9 @@ form.addEventListener('submit', async (event) => {
     vegan: document.getElementById('vegan').checked,
     komposterbar: document.getElementById('komposterbar').checked,
     smagsvarianter: getSelectedSmagsvarianter(),
+    form_varianter: getSelectedOptions(formVarianterSelect),
+    folie_varianter: getSelectedOptions(folieVarianterSelect),
+    finish: getSelectedOptions(finishSelect),
     description: formData.get('description') || '',
     category: getSelectedCategories(),
     price: formData.get('price') || '',
