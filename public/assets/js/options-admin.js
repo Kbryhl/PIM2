@@ -117,8 +117,9 @@ function bindActions() {
       }
 
       try {
-        await callOptionsApi({ action: 'delete', group, value });
+        const data = await callOptionsApi({ action: 'delete', group, value });
         await loadAndRender();
+        resultBox.textContent = `Deleted option. Updated ${Number(data.affected_products || 0)} product(s).`;
       } catch (error) {
         resultBox.textContent = String(error);
       }
@@ -134,8 +135,9 @@ function bindActions() {
       if (!newValue) return;
 
       try {
-        await callOptionsApi({ action: 'rename', group, old_value: oldValue, new_value: newValue });
+        const data = await callOptionsApi({ action: 'rename', group, old_value: oldValue, new_value: newValue });
         await loadAndRender();
+        resultBox.textContent = `Renamed option. Updated ${Number(data.affected_products || 0)} product(s).`;
       } catch (error) {
         resultBox.textContent = String(error);
       }

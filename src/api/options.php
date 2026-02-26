@@ -87,7 +87,18 @@ try {
             }
 
             $ok = $optionRepository->renameOption($group, $oldValue, $newValue);
-            echo json_encode(['data' => ['success' => $ok, 'values' => $optionRepository->listByGroup($group)]]);
+            $affectedProducts = 0;
+            if ($ok) {
+                $affectedProducts = $optionRepository->applyRenameToProducts($group, $oldValue, $newValue);
+            }
+
+            echo json_encode([
+                'data' => [
+                    'success' => $ok,
+                    'affected_products' => $affectedProducts,
+                    'values' => $optionRepository->listByGroup($group),
+                ],
+            ]);
             exit;
         }
 
@@ -100,7 +111,18 @@ try {
             }
 
             $ok = $optionRepository->deleteOption($group, $value);
-            echo json_encode(['data' => ['success' => $ok, 'values' => $optionRepository->listByGroup($group)]]);
+            $affectedProducts = 0;
+            if ($ok) {
+                $affectedProducts = $optionRepository->applyDeleteToProducts($group, $value);
+            }
+
+            echo json_encode([
+                'data' => [
+                    'success' => $ok,
+                    'affected_products' => $affectedProducts,
+                    'values' => $optionRepository->listByGroup($group),
+                ],
+            ]);
             exit;
         }
 
