@@ -66,6 +66,28 @@ final class ProductRepository
         ];
     }
 
+    public function getDistinctCategories(): array
+    {
+        $stmt = $this->pdo->query("SELECT category FROM products WHERE category IS NOT NULL AND TRIM(category) <> ''");
+        $rows = $stmt ? $stmt->fetchAll() : [];
+
+        $categories = [];
+        foreach ($rows as $row) {
+            $raw = (string) ($row['category'] ?? '');
+            foreach (explode(',', $raw) as $part) {
+                $trimmed = trim($part);
+                if ($trimmed !== '') {
+                    $categories[$trimmed] = true;
+                }
+            }
+        }
+
+        $list = array_keys($categories);
+        natcasesort($list);
+
+        return array_values($list);
+    }
+
     public function getProductById(int $id): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM products WHERE id = :id LIMIT 1');
@@ -125,7 +147,7 @@ final class ProductRepository
             'sku' => $sku,
             'product_name' => $productName,
             'description' => $normalized['description'] ?? null,
-            'category' => $normalized['category'] ?? null,
+            'category' => $this->normalizeCategoryForStorage($normalized['category'] ?? null),
             'price' => $this->toNullableDecimal($normalized['price'] ?? null),
             'currency' => $normalized['currency'] ?? null,
             'weight' => $normalized['weight'] ?? null,
@@ -191,7 +213,7 @@ final class ProductRepository
             'sku' => $sku,
             'product_name' => $productName,
             'description' => $normalized['description'] ?? $this->toNullableString($existing['description'] ?? null),
-            'category' => $normalized['category'] ?? $this->toNullableString($existing['category'] ?? null),
+            'category' => $this->normalizeCategoryForStorage($normalized['category'] ?? ($existing['category'] ?? null)),
             'price' => $this->toNullableDecimal($normalized['price'] ?? ($existing['price'] ?? null)),
             'currency' => $normalized['currency'] ?? $this->toNullableString($existing['currency'] ?? null),
             'weight' => $normalized['weight'] ?? $this->toNullableString($existing['weight'] ?? null),
@@ -606,5 +628,43 @@ final class ProductRepository
         }
 
         return number_format((float) $string, 2, '.', '');
+    }
+
+    private function normalizeCategoryForStorage(mixed $value): ?string
+    {
+        if (is_array($value)) {
+            $parts = [];
+            foreach ($value as $item) {
+                $trimmed = trim((string) $item);
+                if ($trimmed !== '') {
+                    $parts[$trimmed] = true;
+                }
+            }
+
+            if ($parts === []) {
+                return null;
+            }
+
+            return implode(', ', array_keys($parts));
+        }
+
+        $string = trim((string) $value);
+        if ($string === '') {
+            return null;
+        }
+
+        $parts = [];
+        foreach (explode(',', $string) as $item) {
+            $trimmed = trim($item);
+            if ($trimmed !== '') {
+                $parts[$trimmed] = true;
+            }
+        }
+
+        if ($parts === []) {
+            return null;
+        }
+
+        return implode(', ', array_keys($parts));
     }
 }

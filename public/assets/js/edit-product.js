@@ -3,6 +3,9 @@ const apiUrl = '/api/products.php';
 const form = document.getElementById('editProductForm');
 const resultBox = document.getElementById('editProductResult');
 const dynamicFieldsContainer = document.getElementById('dynamicFields');
+const categorySelect = document.getElementById('categorySelect');
+const newCategoryInput = document.getElementById('newCategoryInput');
+const addCategoryBtn = document.getElementById('addCategoryBtn');
 
 const readOnlyExtraFields = new Set([
   'change_log',
@@ -42,6 +45,67 @@ function parseQueryId() {
   const params = new URLSearchParams(window.location.search);
   return Number(params.get('id') || '0');
 }
+
+function parseCategoryString(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  return String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function getSelectedCategories() {
+  return Array.from(categorySelect.selectedOptions).map((option) => option.value).filter(Boolean);
+}
+
+function ensureCategoryOption(category, selected = false) {
+  const label = String(category || '').trim();
+  if (!label) return;
+
+  const existing = Array.from(categorySelect.options).find((opt) => opt.value.toLowerCase() === label.toLowerCase());
+  if (existing) {
+    existing.selected = selected || existing.selected;
+    return;
+  }
+
+  const option = document.createElement('option');
+  option.value = label;
+  option.textContent = label;
+  option.selected = selected;
+  categorySelect.appendChild(option);
+}
+
+async function loadCategoryOptions(initialSelected = []) {
+  try {
+    const response = await fetch(`${apiUrl}?categories=1`);
+    const payload = await response.json();
+    if (!response.ok || !payload.data) {
+      return;
+    }
+
+    const categories = Array.isArray(payload.data.categories) ? payload.data.categories : [];
+    categorySelect.innerHTML = '';
+
+    for (const category of categories) {
+      ensureCategoryOption(category, false);
+    }
+
+    for (const category of initialSelected) {
+      ensureCategoryOption(category, true);
+    }
+  } catch {
+  }
+}
+
+addCategoryBtn.addEventListener('click', () => {
+  const category = String(newCategoryInput.value || '').trim();
+  if (!category) return;
+  ensureCategoryOption(category, true);
+  newCategoryInput.value = '';
+});
 
 function toBoolean(value) {
   if (value === true || value === 1) return true;
@@ -112,7 +176,8 @@ function applyProductToForm(product) {
   document.getElementById('sku').value = product.sku || '';
   document.getElementById('productName').value = product.product_name || '';
   document.getElementById('description').value = product.description || '';
-  document.getElementById('category').value = product.category || '';
+  const selectedCategories = parseCategoryString(product.category || '');
+  loadCategoryOptions(selectedCategories);
   document.getElementById('price').value = product.price || '';
   document.getElementById('currency').value = product.currency || '';
   document.getElementById('weight').value = product.weight || '';
@@ -201,7 +266,7 @@ form.addEventListener('submit', async (event) => {
     vegan: document.getElementById('vegan').checked,
     komposterbar: document.getElementById('komposterbar').checked,
     description: formData.get('description') || '',
-    category: formData.get('category') || '',
+    category: getSelectedCategories(),
     price: formData.get('price') || '',
     currency: formData.get('currency') || '',
     weight: formData.get('weight') || '',

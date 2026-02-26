@@ -9,7 +9,55 @@ const holdbarhedMonthsInput = document.getElementById('holdbarhedMonths');
 const holdbarhedTextInput = document.getElementById('holdbarhedText');
 const productPhotoUrlInput = document.getElementById('productPhotoUrl');
 const databladUrlInput = document.getElementById('databladUrl');
+const categorySelect = document.getElementById('categorySelect');
+const newCategoryInput = document.getElementById('newCategoryInput');
+const addCategoryBtn = document.getElementById('addCategoryBtn');
 const changeLogInput = document.getElementById('changeLog');
+
+function getSelectedCategories() {
+  return Array.from(categorySelect.selectedOptions).map((option) => option.value).filter(Boolean);
+}
+
+function ensureCategoryOption(category, selected = false) {
+  const label = String(category || '').trim();
+  if (!label) return;
+
+  const existing = Array.from(categorySelect.options).find((opt) => opt.value.toLowerCase() === label.toLowerCase());
+  if (existing) {
+    existing.selected = selected || existing.selected;
+    return;
+  }
+
+  const option = document.createElement('option');
+  option.value = label;
+  option.textContent = label;
+  option.selected = selected;
+  categorySelect.appendChild(option);
+}
+
+async function loadCategoryOptions() {
+  try {
+    const response = await fetch(`${apiUrl}?categories=1`);
+    const payload = await response.json();
+    if (!response.ok || !payload.data) {
+      return;
+    }
+
+    const categories = Array.isArray(payload.data.categories) ? payload.data.categories : [];
+    categorySelect.innerHTML = '';
+    for (const category of categories) {
+      ensureCategoryOption(category, false);
+    }
+  } catch {
+  }
+}
+
+addCategoryBtn.addEventListener('click', () => {
+  const category = String(newCategoryInput.value || '').trim();
+  if (!category) return;
+  ensureCategoryOption(category, true);
+  newCategoryInput.value = '';
+});
 
 function updateTaraWeight() {
   const netWeight = Number(netWeightInput.value || 0);
@@ -68,7 +116,7 @@ form.addEventListener('submit', async (event) => {
     vegan: document.getElementById('vegan').checked,
     komposterbar: document.getElementById('komposterbar').checked,
     description: formData.get('description') || '',
-    category: formData.get('category') || '',
+    category: getSelectedCategories(),
     price: formData.get('price') || '',
     currency: formData.get('currency') || '',
     weight: formData.get('weight') || '',
@@ -107,6 +155,9 @@ form.addEventListener('submit', async (event) => {
 
     form.reset();
     document.getElementById('sheetName').value = 'SIGDETSØDT';
+    for (const option of categorySelect.options) {
+      option.selected = false;
+    }
     changeLogInput.value = String(result.data.change_log || 'Saved.');
     taraWeightInput.value = String(result.data.tara_weight_grams ?? '');
     holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? '');
@@ -121,3 +172,4 @@ form.addEventListener('submit', async (event) => {
 });
 
 updateSigdetsoedtAutoFields();
+loadCategoryOptions();

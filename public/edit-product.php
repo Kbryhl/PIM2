@@ -104,8 +104,12 @@
                 <label for="description">Description</label>
                 <textarea id="description" name="description" rows="4"></textarea>
 
-                <label for="category">Category</label>
-                <input id="category" name="category" type="text" />
+                <label for="categorySelect">Category (multi-select)</label>
+                <select id="categorySelect" name="category" multiple size="6"></select>
+                <div class="inline-row">
+                    <input id="newCategoryInput" type="text" placeholder="Add new category" />
+                    <button id="addCategoryBtn" type="button">Add Category</button>
+                </div>
 
                 <label for="price">Price</label>
                 <input id="price" name="price" type="text" />

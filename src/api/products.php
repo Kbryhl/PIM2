@@ -59,7 +59,7 @@ try {
                 'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
                 'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
-                'category' => trim((string) ($payload['category'] ?? $_POST['category'] ?? '')),
+                'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
                 'currency' => trim((string) ($payload['currency'] ?? $_POST['currency'] ?? '')),
                 'weight' => trim((string) ($payload['weight'] ?? $_POST['weight'] ?? '')),
@@ -122,7 +122,7 @@ try {
                 'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
                 'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
-                'category' => trim((string) ($payload['category'] ?? $_POST['category'] ?? '')),
+                'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
                 'currency' => trim((string) ($payload['currency'] ?? $_POST['currency'] ?? '')),
                 'weight' => trim((string) ($payload['weight'] ?? $_POST['weight'] ?? '')),
@@ -181,6 +181,15 @@ try {
     }
 
     $sheet = isset($_GET['sheet']) ? trim((string) $_GET['sheet']) : '';
+    if (isset($_GET['categories'])) {
+        echo json_encode([
+            'data' => [
+                'categories' => $repository->getDistinctCategories(),
+            ],
+        ]);
+        exit;
+    }
+
     $query = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
     $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
     $perPage = isset($_GET['perPage']) ? (int) $_GET['perPage'] : 20;
