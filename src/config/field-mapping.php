@@ -31,6 +31,27 @@ return [
         'shipping_info' => [
             'shipping_info', 'shipping', 'fragt', 'fragtinfo', 'levering', 'leveringstid',
         ],
+        'active' => [
+            'active', 'aktiv', 'enabled', 'is_active',
+        ],
+        'barcode' => [
+            'barcode', 'stregkode', 'ean',
+        ],
+        'hostedshop_id' => [
+            'hostedshop_id', 'hostedshopid', 'shop_id', 'webshop_id',
+        ],
+        'supplier' => [
+            'supplier', 'leverandoer', 'leverandor',
+        ],
+        'brand' => [
+            'brand', 'maerke', 'mærke',
+        ],
+        'net_weight_grams' => [
+            'net_weight_grams', 'nettovaegt', 'nettovægt', 'netto_weight', 'netto_vaegt', 'net_weight',
+        ],
+        'gross_weight_grams' => [
+            'gross_weight_grams', 'bruttovaegt', 'bruttovægt', 'gross_weight', 'brutto_weight',
+        ],
     ],
     'sheets' => [
         'aquadana' => [
@@ -54,6 +75,13 @@ return [
             'weight' => ['sigdetsoedt_vaegt', 'vaegt', 'nettovaegt'],
             'dimensions' => ['sigdetsoedt_dimensioner', 'dimensioner', 'maal', 'stoerrelse'],
             'shipping_info' => ['sigdetsoedt_fragt', 'fragtinfo', 'shipping', 'leveringstid'],
+            'active' => ['sigdetsoedt_aktiv', 'aktiv', 'active'],
+            'barcode' => ['sigdetsoedt_barcode', 'stregkode', 'barcode', 'ean'],
+            'hostedshop_id' => ['sigdetsoedt_hostedshop_id', 'hostedshop_id', 'shop_id'],
+            'supplier' => ['sigdetsoedt_supplier', 'leverandor', 'supplier'],
+            'brand' => ['sigdetsoedt_brand', 'maerke', 'brand'],
+            'net_weight_grams' => ['sigdetsoedt_nettovaegt', 'nettovaegt', 'net_weight_grams'],
+            'gross_weight_grams' => ['sigdetsoedt_bruttovaegt', 'bruttovaegt', 'gross_weight_grams'],
         ],
     ],
 ];

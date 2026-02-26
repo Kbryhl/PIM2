@@ -46,6 +46,13 @@ try {
             $row = [
                 'sku' => trim((string) ($payload['sku'] ?? $_POST['sku'] ?? '')),
                 'product_name' => trim((string) ($payload['product_name'] ?? $_POST['product_name'] ?? '')),
+                'active' => $payload['active'] ?? $_POST['active'] ?? '',
+                'barcode' => trim((string) ($payload['barcode'] ?? $_POST['barcode'] ?? '')),
+                'hostedshop_id' => trim((string) ($payload['hostedshop_id'] ?? $_POST['hostedshop_id'] ?? '')),
+                'supplier' => trim((string) ($payload['supplier'] ?? $_POST['supplier'] ?? '')),
+                'brand' => trim((string) ($payload['brand'] ?? $_POST['brand'] ?? '')),
+                'net_weight_grams' => trim((string) ($payload['net_weight_grams'] ?? $_POST['net_weight_grams'] ?? '')),
+                'gross_weight_grams' => trim((string) ($payload['gross_weight_grams'] ?? $_POST['gross_weight_grams'] ?? '')),
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => trim((string) ($payload['category'] ?? $_POST['category'] ?? '')),
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
@@ -68,10 +75,15 @@ try {
                 exit;
             }
 
+            $savedProduct = $repository->getProductBySheetAndSku($sheetName, (string) $row['sku']);
+            $savedExtraData = is_array($savedProduct['extra_data'] ?? null) ? $savedProduct['extra_data'] : [];
+
             echo json_encode([
                 'data' => [
                     'saved' => true,
                     'sheet_name' => $sheetName,
+                    'change_log' => $savedExtraData['change_log'] ?? null,
+                    'tara_weight_grams' => $savedExtraData['tara_weight_grams'] ?? null,
                 ],
             ]);
             exit;

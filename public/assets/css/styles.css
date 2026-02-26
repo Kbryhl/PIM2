@@ -187,6 +187,16 @@ th {
     gap: 0.6rem;
 }
 
+.checkbox-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-field input[type="checkbox"] {
+    width: auto;
+}
+
 .result-box {
     margin-top: 1rem;
     background: #0f172a;

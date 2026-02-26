@@ -110,9 +110,15 @@ final class ProductRepository
                 extra_data = VALUES(extra_data)
         ';
 
+        $existingProduct = $this->findBySheetAndSku($sheetName, $sku);
+        $managedMeta = $this->buildManagedMeta($normalized, $existingProduct);
+
         $stmt = $this->pdo->prepare($sql);
 
         $extraData = $normalized['extra_data'] ?? [];
+        if (is_array($managedMeta)) {
+            $extraData = array_merge($extraData, $managedMeta);
+        }
 
         return $stmt->execute([
             'sheet_name' => $sheetName,
@@ -127,6 +133,11 @@ final class ProductRepository
             'shipping_info' => $normalized['shipping_info'] ?? null,
             'extra_data' => json_encode($extraData, JSON_UNESCAPED_UNICODE),
         ]);
+    }
+
+    public function getProductBySheetAndSku(string $sheetName, ?string $sku): ?array
+    {
+        return $this->findBySheetAndSku($sheetName, $sku);
     }
 
     public function writeImportLog(string $sheetName, string $fileName, int $rowsImported, int $rowsSkipped, string $message = ''): void
@@ -208,8 +219,177 @@ final class ProductRepository
             'weight' => $this->pickMappedValue($map, $aliases, 'weight'),
             'dimensions' => $this->pickMappedValue($map, $aliases, 'dimensions'),
             'shipping_info' => $this->pickMappedValue($map, $aliases, 'shipping_info'),
+            'active' => $this->pickMappedValue($map, $aliases, 'active'),
+            'barcode' => $this->pickMappedValue($map, $aliases, 'barcode'),
+            'hostedshop_id' => $this->pickMappedValue($map, $aliases, 'hostedshop_id'),
+            'supplier' => $this->pickMappedValue($map, $aliases, 'supplier'),
+            'brand' => $this->pickMappedValue($map, $aliases, 'brand'),
+            'net_weight_grams' => $this->pickMappedValue($map, $aliases, 'net_weight_grams'),
+            'gross_weight_grams' => $this->pickMappedValue($map, $aliases, 'gross_weight_grams'),
             'extra_data' => $extraData,
         ];
+    }
+
+    private function findBySheetAndSku(string $sheetName, ?string $sku): ?array
+    {
+        $trimmedSku = trim((string) $sku);
+        if ($trimmedSku === '') {
+            return null;
+        }
+
+        $stmt = $this->pdo->prepare('SELECT * FROM products WHERE sheet_name = :sheet_name AND sku = :sku LIMIT 1');
+        $stmt->execute([
+            'sheet_name' => $sheetName,
+            'sku' => $trimmedSku,
+        ]);
+
+        $product = $stmt->fetch();
+        if (!$product) {
+            return null;
+        }
+
+        $product['extra_data'] = $product['extra_data'] ? json_decode((string) $product['extra_data'], true) : [];
+
+        return $product;
+    }
+
+    private function buildManagedMeta(array $normalized, ?array $existingProduct): array
+    {
+        $active = $this->toBooleanFlag($normalized['active'] ?? null);
+        $barcode = $this->toNullableString($normalized['barcode'] ?? null);
+        $hostedshopId = $this->toNullableString($normalized['hostedshop_id'] ?? null);
+        $supplier = $this->toNullableString($normalized['supplier'] ?? null);
+        $brand = $this->toNullableString($normalized['brand'] ?? null);
+        $netWeight = $this->toNullableInt($normalized['net_weight_grams'] ?? null);
+        $grossWeight = $this->toNullableInt($normalized['gross_weight_grams'] ?? null);
+        $taraWeight = $this->calculateTara($grossWeight, $netWeight);
+
+        $currentSnapshot = [
+            'sku' => $this->toNullableString($normalized['sku'] ?? null),
+            'product_name' => $this->toNullableString($normalized['product_name'] ?? null),
+            'active' => $active,
+            'barcode' => $barcode,
+            'hostedshop_id' => $hostedshopId,
+            'supplier' => $supplier,
+            'brand' => $brand,
+            'net_weight_grams' => $netWeight,
+            'gross_weight_grams' => $grossWeight,
+            'tara_weight_grams' => $taraWeight,
+        ];
+
+        $previousSnapshot = $this->extractSnapshotFromExisting($existingProduct);
+        $changeLog = $this->buildChangeLogText($currentSnapshot, $previousSnapshot);
+
+        return [
+            'active' => $active,
+            'barcode' => $barcode,
+            'hostedshop_id' => $hostedshopId,
+            'supplier' => $supplier,
+            'brand' => $brand,
+            'net_weight_grams' => $netWeight,
+            'gross_weight_grams' => $grossWeight,
+            'tara_weight_grams' => $taraWeight,
+            'change_log' => $changeLog,
+            'last_saved_at' => date(DATE_ATOM),
+        ];
+    }
+
+    private function extractSnapshotFromExisting(?array $existingProduct): ?array
+    {
+        if (!is_array($existingProduct)) {
+            return null;
+        }
+
+        $extra = is_array($existingProduct['extra_data'] ?? null) ? $existingProduct['extra_data'] : [];
+
+        return [
+            'sku' => $this->toNullableString($existingProduct['sku'] ?? null),
+            'product_name' => $this->toNullableString($existingProduct['product_name'] ?? null),
+            'active' => $this->toNullableInt($extra['active'] ?? null),
+            'barcode' => $this->toNullableString($extra['barcode'] ?? null),
+            'hostedshop_id' => $this->toNullableString($extra['hostedshop_id'] ?? null),
+            'supplier' => $this->toNullableString($extra['supplier'] ?? null),
+            'brand' => $this->toNullableString($extra['brand'] ?? null),
+            'net_weight_grams' => $this->toNullableInt($extra['net_weight_grams'] ?? null),
+            'gross_weight_grams' => $this->toNullableInt($extra['gross_weight_grams'] ?? null),
+            'tara_weight_grams' => $this->toNullableInt($extra['tara_weight_grams'] ?? null),
+        ];
+    }
+
+    private function buildChangeLogText(array $currentSnapshot, ?array $previousSnapshot): string
+    {
+        $timestamp = date('Y-m-d H:i');
+        if ($previousSnapshot === null) {
+            return $timestamp . ' - Created product';
+        }
+
+        $labels = [
+            'sku' => 'SKU',
+            'product_name' => 'Product name',
+            'active' => 'Active',
+            'barcode' => 'Barcode',
+            'hostedshop_id' => 'HostedShop ID',
+            'supplier' => 'Supplier',
+            'brand' => 'Brand',
+            'net_weight_grams' => 'Nettovægt',
+            'gross_weight_grams' => 'Bruttovægt',
+            'tara_weight_grams' => 'Tara Weight',
+        ];
+
+        $changed = [];
+        foreach ($labels as $field => $label) {
+            $before = $previousSnapshot[$field] ?? null;
+            $after = $currentSnapshot[$field] ?? null;
+
+            if ((string) $before !== (string) $after) {
+                $changed[] = $label;
+            }
+        }
+
+        if ($changed === []) {
+            return $timestamp . ' - Saved (no field changes)';
+        }
+
+        return $timestamp . ' - Changed: ' . implode(', ', $changed);
+    }
+
+    private function toBooleanFlag(mixed $value): int
+    {
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
+        }
+
+        $string = mb_strtolower(trim((string) $value));
+        return in_array($string, ['1', 'true', 'yes', 'on', 'ja'], true) ? 1 : 0;
+    }
+
+    private function toNullableString(mixed $value): ?string
+    {
+        $string = trim((string) $value);
+        return $string === '' ? null : $string;
+    }
+
+    private function toNullableInt(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $string = preg_replace('/[^0-9\-]/', '', (string) $value) ?? '';
+        if ($string === '' || !is_numeric($string)) {
+            return null;
+        }
+
+        return (int) $string;
+    }
+
+    private function calculateTara(?int $grossWeight, ?int $netWeight): ?int
+    {
+        if ($grossWeight === null || $netWeight === null) {
+            return null;
+        }
+
+        return $grossWeight - $netWeight;
     }
 
     private function getAliasesForSheet(string $sheetName): array
