@@ -92,6 +92,13 @@
                     <span>Komposterbar</span>
                 </label>
 
+                <label for="smagsvarianterSelect">Smagsvarianter (multi-select)</label>
+                <select id="smagsvarianterSelect" name="smagsvarianter" multiple size="8"></select>
+                <div class="inline-row">
+                    <input id="newSmagsvariantInput" type="text" placeholder="Add new smagsvariant" />
+                    <button id="addSmagsvariantBtn" type="button">Add Smagsvariant</button>
+                </div>
+
                 <label for="productPhotoUrl">Product Photo URL (read only)</label>
                 <input id="productPhotoUrl" name="product_photo_url" type="url" readonly placeholder="https://filbank.dk/database/sigdetsoedt/produktfoto/SKU.png" />
 

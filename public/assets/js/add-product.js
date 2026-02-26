@@ -12,10 +12,17 @@ const databladUrlInput = document.getElementById('databladUrl');
 const categorySelect = document.getElementById('categorySelect');
 const newCategoryInput = document.getElementById('newCategoryInput');
 const addCategoryBtn = document.getElementById('addCategoryBtn');
+const smagsvarianterSelect = document.getElementById('smagsvarianterSelect');
+const newSmagsvariantInput = document.getElementById('newSmagsvariantInput');
+const addSmagsvariantBtn = document.getElementById('addSmagsvariantBtn');
 const changeLogInput = document.getElementById('changeLog');
 
 function getSelectedCategories() {
   return Array.from(categorySelect.selectedOptions).map((option) => option.value).filter(Boolean);
+}
+
+function getSelectedSmagsvarianter() {
+  return Array.from(smagsvarianterSelect.selectedOptions).map((option) => option.value).filter(Boolean);
 }
 
 function ensureCategoryOption(category, selected = false) {
@@ -57,6 +64,47 @@ addCategoryBtn.addEventListener('click', () => {
   if (!category) return;
   ensureCategoryOption(category, true);
   newCategoryInput.value = '';
+});
+
+function ensureSmagsvariantOption(value, selected = false) {
+  const label = String(value || '').trim();
+  if (!label) return;
+
+  const existing = Array.from(smagsvarianterSelect.options).find((opt) => opt.value.toLowerCase() === label.toLowerCase());
+  if (existing) {
+    existing.selected = selected || existing.selected;
+    return;
+  }
+
+  const option = document.createElement('option');
+  option.value = label;
+  option.textContent = label;
+  option.selected = selected;
+  smagsvarianterSelect.appendChild(option);
+}
+
+async function loadSmagsvarianterOptions() {
+  try {
+    const response = await fetch(`${apiUrl}?smagsvarianter=1`);
+    const payload = await response.json();
+    if (!response.ok || !payload.data) {
+      return;
+    }
+
+    const variants = Array.isArray(payload.data.smagsvarianter) ? payload.data.smagsvarianter : [];
+    smagsvarianterSelect.innerHTML = '';
+    for (const variant of variants) {
+      ensureSmagsvariantOption(variant, false);
+    }
+  } catch {
+  }
+}
+
+addSmagsvariantBtn.addEventListener('click', () => {
+  const variant = String(newSmagsvariantInput.value || '').trim();
+  if (!variant) return;
+  ensureSmagsvariantOption(variant, true);
+  newSmagsvariantInput.value = '';
 });
 
 function updateTaraWeight() {
@@ -115,6 +163,7 @@ form.addEventListener('submit', async (event) => {
     veggie: document.getElementById('veggie').checked,
     vegan: document.getElementById('vegan').checked,
     komposterbar: document.getElementById('komposterbar').checked,
+    smagsvarianter: getSelectedSmagsvarianter(),
     description: formData.get('description') || '',
     category: getSelectedCategories(),
     price: formData.get('price') || '',
@@ -158,6 +207,9 @@ form.addEventListener('submit', async (event) => {
     for (const option of categorySelect.options) {
       option.selected = false;
     }
+    for (const option of smagsvarianterSelect.options) {
+      option.selected = false;
+    }
     changeLogInput.value = String(result.data.change_log || 'Saved.');
     taraWeightInput.value = String(result.data.tara_weight_grams ?? '');
     holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? '');
@@ -173,3 +225,4 @@ form.addEventListener('submit', async (event) => {
 
 updateSigdetsoedtAutoFields();
 loadCategoryOptions();
+loadSmagsvarianterOptions();

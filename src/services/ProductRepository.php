@@ -103,6 +103,35 @@ final class ProductRepository
         return array_values($list);
     }
 
+    public function getDistinctSmagsvarianter(): array
+    {
+        $stmt = $this->pdo->query("SELECT extra_data FROM products WHERE extra_data IS NOT NULL AND TRIM(extra_data) <> ''");
+        $rows = $stmt ? $stmt->fetchAll() : [];
+
+        $variants = [];
+        foreach ($rows as $row) {
+            $raw = (string) ($row['extra_data'] ?? '');
+            if ($raw === '') {
+                continue;
+            }
+
+            $decoded = json_decode($raw, true);
+            if (!is_array($decoded)) {
+                continue;
+            }
+
+            $list = $this->normalizeStringList($decoded['smagsvarianter'] ?? []);
+            foreach ($list as $variant) {
+                $variants[$variant] = true;
+            }
+        }
+
+        $result = array_keys($variants);
+        natcasesort($result);
+
+        return array_values($result);
+    }
+
     public function getProductById(int $id): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM products WHERE id = :id LIMIT 1');
@@ -334,6 +363,7 @@ final class ProductRepository
             'veggie' => $this->pickMappedValue($map, $aliases, 'veggie'),
             'vegan' => $this->pickMappedValue($map, $aliases, 'vegan'),
             'komposterbar' => $this->pickMappedValue($map, $aliases, 'komposterbar'),
+            'smagsvarianter' => $this->pickMappedValue($map, $aliases, 'smagsvarianter'),
             'extra_data' => $extraData,
         ];
     }
@@ -377,6 +407,7 @@ final class ProductRepository
         $veggie = $this->toBooleanFlag($normalized['veggie'] ?? null);
         $vegan = $this->toBooleanFlag($normalized['vegan'] ?? null);
         $komposterbar = $this->toBooleanFlag($normalized['komposterbar'] ?? null);
+        $smagsvarianter = $this->normalizeStringList($normalized['smagsvarianter'] ?? []);
 
         $sku = $this->toNullableString($normalized['sku'] ?? null);
         $productPhotoUrl = $this->buildSigdetsoedtAssetUrl($sku, 'produktfoto', 'png');
@@ -399,6 +430,7 @@ final class ProductRepository
             'veggie' => $veggie,
             'vegan' => $vegan,
             'komposterbar' => $komposterbar,
+            'smagsvarianter' => $smagsvarianter,
             'product_photo_url' => $productPhotoUrl,
             'datablad_url' => $databladUrl,
         ];
@@ -421,6 +453,7 @@ final class ProductRepository
             'veggie' => $veggie,
             'vegan' => $vegan,
             'komposterbar' => $komposterbar,
+            'smagsvarianter' => $smagsvarianter,
             'product_photo_url' => $productPhotoUrl,
             'datablad_url' => $databladUrl,
             'change_log' => $changeLog,
@@ -453,6 +486,7 @@ final class ProductRepository
             'veggie' => $this->toNullableInt($extra['veggie'] ?? null),
             'vegan' => $this->toNullableInt($extra['vegan'] ?? null),
             'komposterbar' => $this->toNullableInt($extra['komposterbar'] ?? null),
+            'smagsvarianter' => $this->normalizeStringList($extra['smagsvarianter'] ?? []),
             'product_photo_url' => $this->toNullableString($extra['product_photo_url'] ?? null),
             'datablad_url' => $this->toNullableString($extra['datablad_url'] ?? null),
         ];
@@ -482,6 +516,7 @@ final class ProductRepository
             'veggie' => 'Veggie',
             'vegan' => 'Vegan',
             'komposterbar' => 'Komposterbar',
+            'smagsvarianter' => 'Smagsvarianter',
             'product_photo_url' => 'Product Photo',
             'datablad_url' => 'Datablad',
         ];
@@ -491,7 +526,7 @@ final class ProductRepository
             $before = $previousSnapshot[$field] ?? null;
             $after = $currentSnapshot[$field] ?? null;
 
-            if ((string) $before !== (string) $after) {
+            if ($this->valuesDiffer($before, $after)) {
                 $changed[] = $label;
             }
         }
@@ -681,5 +716,41 @@ final class ProductRepository
         }
 
         return implode(', ', array_keys($parts));
+    }
+
+    private function normalizeStringList(mixed $value): array
+    {
+        $items = [];
+
+        if (is_array($value)) {
+            $items = $value;
+        } elseif ($value !== null) {
+            $string = trim((string) $value);
+            if ($string !== '') {
+                $delimiter = str_contains($string, '|') ? '|' : ',';
+                $items = explode($delimiter, $string);
+            }
+        }
+
+        $normalized = [];
+        foreach ($items as $item) {
+            $trimmed = trim((string) $item);
+            if ($trimmed !== '') {
+                $normalized[$trimmed] = true;
+            }
+        }
+
+        return array_values(array_keys($normalized));
+    }
+
+    private function valuesDiffer(mixed $before, mixed $after): bool
+    {
+        if (is_array($before) || is_array($after)) {
+            $beforeJson = json_encode($before, JSON_UNESCAPED_UNICODE);
+            $afterJson = json_encode($after, JSON_UNESCAPED_UNICODE);
+            return $beforeJson !== $afterJson;
+        }
+
+        return (string) $before !== (string) $after;
     }
 }

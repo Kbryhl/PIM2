@@ -6,6 +6,9 @@ const dynamicFieldsContainer = document.getElementById('dynamicFields');
 const categorySelect = document.getElementById('categorySelect');
 const newCategoryInput = document.getElementById('newCategoryInput');
 const addCategoryBtn = document.getElementById('addCategoryBtn');
+const smagsvarianterSelect = document.getElementById('smagsvarianterSelect');
+const newSmagsvariantInput = document.getElementById('newSmagsvariantInput');
+const addSmagsvariantBtn = document.getElementById('addSmagsvariantBtn');
 
 const readOnlyExtraFields = new Set([
   'change_log',
@@ -57,8 +60,23 @@ function parseCategoryString(value) {
     .filter(Boolean);
 }
 
+function parseList(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  return String(value || '')
+    .split('|')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function getSelectedCategories() {
   return Array.from(categorySelect.selectedOptions).map((option) => option.value).filter(Boolean);
+}
+
+function getSelectedSmagsvarianter() {
+  return Array.from(smagsvarianterSelect.selectedOptions).map((option) => option.value).filter(Boolean);
 }
 
 function ensureCategoryOption(category, selected = false) {
@@ -105,6 +123,52 @@ addCategoryBtn.addEventListener('click', () => {
   if (!category) return;
   ensureCategoryOption(category, true);
   newCategoryInput.value = '';
+});
+
+function ensureSmagsvariantOption(value, selected = false) {
+  const label = String(value || '').trim();
+  if (!label) return;
+
+  const existing = Array.from(smagsvarianterSelect.options).find((opt) => opt.value.toLowerCase() === label.toLowerCase());
+  if (existing) {
+    existing.selected = selected || existing.selected;
+    return;
+  }
+
+  const option = document.createElement('option');
+  option.value = label;
+  option.textContent = label;
+  option.selected = selected;
+  smagsvarianterSelect.appendChild(option);
+}
+
+async function loadSmagsvarianterOptions(initialSelected = []) {
+  try {
+    const response = await fetch(`${apiUrl}?smagsvarianter=1`);
+    const payload = await response.json();
+    if (!response.ok || !payload.data) {
+      return;
+    }
+
+    const variants = Array.isArray(payload.data.smagsvarianter) ? payload.data.smagsvarianter : [];
+    smagsvarianterSelect.innerHTML = '';
+
+    for (const variant of variants) {
+      ensureSmagsvariantOption(variant, false);
+    }
+
+    for (const variant of initialSelected) {
+      ensureSmagsvariantOption(variant, true);
+    }
+  } catch {
+  }
+}
+
+addSmagsvariantBtn.addEventListener('click', () => {
+  const variant = String(newSmagsvariantInput.value || '').trim();
+  if (!variant) return;
+  ensureSmagsvariantOption(variant, true);
+  newSmagsvariantInput.value = '';
 });
 
 function toBoolean(value) {
@@ -185,6 +249,7 @@ function applyProductToForm(product) {
   document.getElementById('shippingInfo').value = product.shipping_info || '';
 
   const extra = (product.extra_data && typeof product.extra_data === 'object') ? product.extra_data : {};
+  const selectedSmagsvarianter = parseList(extra.smagsvarianter || []);
 
   document.getElementById('active').checked = toBoolean(extra.active ?? false);
   document.getElementById('barcode').value = String(extra.barcode ?? '');
@@ -199,6 +264,7 @@ function applyProductToForm(product) {
   document.getElementById('vegan').checked = toBoolean(extra.vegan ?? false);
   document.getElementById('komposterbar').checked = toBoolean(extra.komposterbar ?? false);
   changeLogInput.value = String(extra.change_log ?? '');
+  loadSmagsvarianterOptions(selectedSmagsvarianter);
 
   dynamicFieldsContainer.innerHTML = '';
   for (const [key, value] of Object.entries(extra)) {
@@ -265,6 +331,7 @@ form.addEventListener('submit', async (event) => {
     veggie: document.getElementById('veggie').checked,
     vegan: document.getElementById('vegan').checked,
     komposterbar: document.getElementById('komposterbar').checked,
+    smagsvarianter: getSelectedSmagsvarianter(),
     description: formData.get('description') || '',
     category: getSelectedCategories(),
     price: formData.get('price') || '',

@@ -58,6 +58,7 @@ try {
                 'veggie' => $payload['veggie'] ?? $_POST['veggie'] ?? '',
                 'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
                 'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
+                'smagsvarianter' => $payload['smagsvarianter'] ?? $_POST['smagsvarianter'] ?? [],
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
@@ -92,6 +93,7 @@ try {
                     'holdbarhed_text' => $savedExtraData['holdbarhed_text'] ?? null,
                     'product_photo_url' => $savedExtraData['product_photo_url'] ?? null,
                     'datablad_url' => $savedExtraData['datablad_url'] ?? null,
+                    'smagsvarianter' => $savedExtraData['smagsvarianter'] ?? [],
                 ],
             ]);
             exit;
@@ -121,6 +123,7 @@ try {
                 'veggie' => $payload['veggie'] ?? $_POST['veggie'] ?? '',
                 'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
                 'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
+                'smagsvarianter' => $payload['smagsvarianter'] ?? $_POST['smagsvarianter'] ?? [],
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
@@ -156,6 +159,7 @@ try {
                     'holdbarhed_text' => $updatedExtraData['holdbarhed_text'] ?? null,
                     'product_photo_url' => $updatedExtraData['product_photo_url'] ?? null,
                     'datablad_url' => $updatedExtraData['datablad_url'] ?? null,
+                    'smagsvarianter' => $updatedExtraData['smagsvarianter'] ?? [],
                 ],
             ]);
             exit;
@@ -185,6 +189,15 @@ try {
         echo json_encode([
             'data' => [
                 'categories' => $repository->getDistinctCategories(),
+            ],
+        ]);
+        exit;
+    }
+
+    if (isset($_GET['smagsvarianter'])) {
+        echo json_encode([
+            'data' => [
+                'smagsvarianter' => $repository->getDistinctSmagsvarianter(),
             ],
         ]);
         exit;

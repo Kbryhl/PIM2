@@ -67,6 +67,9 @@ return [
         'komposterbar' => [
             'komposterbar', 'compostable',
         ],
+        'smagsvarianter' => [
+            'smagsvarianter', 'smagsvariant', 'flavor_variants', 'flavours', 'flavors',
+        ],
     ],
     'sheets' => [
         'aquadana' => [
@@ -102,6 +105,7 @@ return [
             'veggie' => ['sigdetsoedt_veggie', 'veggie'],
             'vegan' => ['sigdetsoedt_vegan', 'vegan'],
             'komposterbar' => ['sigdetsoedt_komposterbar', 'komposterbar'],
+            'smagsvarianter' => ['sigdetsoedt_smagsvarianter', 'smagsvarianter', 'flavor_variants'],
         ],
     ],
 ];
