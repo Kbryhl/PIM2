@@ -14,6 +14,7 @@
                 <a href="index.php">Products</a>
                 <a href="import.php">Import</a>
                 <a href="add-product.php" class="active">Add Product</a>
+                <a href="options-admin.php">Options Admin</a>
             </nav>
         </div>
     </header>

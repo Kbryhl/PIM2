@@ -1,4 +1,5 @@
 const apiUrl = '/api/products.php';
+const optionsApiUrl = '/api/options.php';
 const form = document.getElementById('addProductForm');
 const resultBox = document.getElementById('addProductResult');
 const netWeightInput = document.getElementById('netWeightGrams');
@@ -98,13 +99,13 @@ function ensureSmagsvariantOption(value, selected = false) {
 
 async function loadSmagsvarianterOptions() {
   try {
-    const response = await fetch(`${apiUrl}?smagsvarianter=1`);
+    const response = await fetch(`${optionsApiUrl}?group=smagsvarianter`);
     const payload = await response.json();
     if (!response.ok || !payload.data) {
       return;
     }
 
-    const variants = Array.isArray(payload.data.smagsvarianter) ? payload.data.smagsvarianter : [];
+    const variants = Array.isArray(payload.data.values) ? payload.data.values : [];
     smagsvarianterSelect.innerHTML = '';
     for (const variant of variants) {
       ensureSmagsvariantOption(variant, false);
@@ -137,15 +138,15 @@ function ensureOption(selectElement, value, selected = false) {
   selectElement.appendChild(option);
 }
 
-async function loadReusableList(queryKey, responseKey, selectElement) {
+async function loadReusableList(groupKey, selectElement) {
   try {
-    const response = await fetch(`${apiUrl}?${queryKey}=1`);
+    const response = await fetch(`${optionsApiUrl}?group=${encodeURIComponent(groupKey)}`);
     const payload = await response.json();
     if (!response.ok || !payload.data) {
       return;
     }
 
-    const options = Array.isArray(payload.data[responseKey]) ? payload.data[responseKey] : [];
+    const options = Array.isArray(payload.data.values) ? payload.data.values : [];
     selectElement.innerHTML = '';
     for (const option of options) {
       ensureOption(selectElement, option, false);
@@ -157,23 +158,34 @@ async function loadReusableList(queryKey, responseKey, selectElement) {
 addFormVariantBtn.addEventListener('click', () => {
   const value = String(newFormVariantInput.value || '').trim();
   if (!value) return;
-  ensureOption(formVarianterSelect, value, true);
-  newFormVariantInput.value = '';
+  callOptionsApiAdd('form_varianter', value, formVarianterSelect, newFormVariantInput);
 });
 
 addFolieVariantBtn.addEventListener('click', () => {
   const value = String(newFolieVariantInput.value || '').trim();
   if (!value) return;
-  ensureOption(folieVarianterSelect, value, true);
-  newFolieVariantInput.value = '';
+  callOptionsApiAdd('folie_varianter', value, folieVarianterSelect, newFolieVariantInput);
 });
 
 addFinishBtn.addEventListener('click', () => {
   const value = String(newFinishInput.value || '').trim();
   if (!value) return;
-  ensureOption(finishSelect, value, true);
-  newFinishInput.value = '';
+  callOptionsApiAdd('finish', value, finishSelect, newFinishInput);
 });
+
+async function callOptionsApiAdd(group, value, selectElement, inputElement) {
+  try {
+    await fetch(optionsApiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'add', group, value }),
+    });
+  } catch {
+  }
+
+  ensureOption(selectElement, value, true);
+  if (inputElement) inputElement.value = '';
+}
 
 function updateTaraWeight() {
   const netWeight = Number(netWeightInput.value || 0);
@@ -306,6 +318,6 @@ form.addEventListener('submit', async (event) => {
 updateSigdetsoedtAutoFields();
 loadCategoryOptions();
 loadSmagsvarianterOptions();
-loadReusableList('formvarianter', 'formvarianter', formVarianterSelect);
-loadReusableList('folievarianter', 'folievarianter', folieVarianterSelect);
-loadReusableList('finish', 'finish', finishSelect);
+loadReusableList('form_varianter', formVarianterSelect);
+loadReusableList('folie_varianter', folieVarianterSelect);
+loadReusableList('finish', finishSelect);

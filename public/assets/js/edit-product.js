@@ -1,4 +1,5 @@
 const apiUrl = '/api/products.php';
+const optionsApiUrl = '/api/options.php';
 
 const form = document.getElementById('editProductForm');
 const resultBox = document.getElementById('editProductResult');
@@ -157,13 +158,13 @@ function ensureSmagsvariantOption(value, selected = false) {
 
 async function loadSmagsvarianterOptions(initialSelected = []) {
   try {
-    const response = await fetch(`${apiUrl}?smagsvarianter=1`);
+    const response = await fetch(`${optionsApiUrl}?group=smagsvarianter`);
     const payload = await response.json();
     if (!response.ok || !payload.data) {
       return;
     }
 
-    const variants = Array.isArray(payload.data.smagsvarianter) ? payload.data.smagsvarianter : [];
+    const variants = Array.isArray(payload.data.values) ? payload.data.values : [];
     smagsvarianterSelect.innerHTML = '';
 
     for (const variant of variants) {
@@ -201,15 +202,15 @@ function ensureOption(selectElement, value, selected = false) {
   selectElement.appendChild(option);
 }
 
-async function loadReusableList(queryKey, responseKey, selectElement, initialSelected = []) {
+async function loadReusableList(groupKey, selectElement, initialSelected = []) {
   try {
-    const response = await fetch(`${apiUrl}?${queryKey}=1`);
+    const response = await fetch(`${optionsApiUrl}?group=${encodeURIComponent(groupKey)}`);
     const payload = await response.json();
     if (!response.ok || !payload.data) {
       return;
     }
 
-    const options = Array.isArray(payload.data[responseKey]) ? payload.data[responseKey] : [];
+    const options = Array.isArray(payload.data.values) ? payload.data.values : [];
     selectElement.innerHTML = '';
     for (const option of options) {
       ensureOption(selectElement, option, false);
@@ -224,23 +225,34 @@ async function loadReusableList(queryKey, responseKey, selectElement, initialSel
 addFormVariantBtn.addEventListener('click', () => {
   const value = String(newFormVariantInput.value || '').trim();
   if (!value) return;
-  ensureOption(formVarianterSelect, value, true);
-  newFormVariantInput.value = '';
+  callOptionsApiAdd('form_varianter', value, formVarianterSelect, newFormVariantInput);
 });
 
 addFolieVariantBtn.addEventListener('click', () => {
   const value = String(newFolieVariantInput.value || '').trim();
   if (!value) return;
-  ensureOption(folieVarianterSelect, value, true);
-  newFolieVariantInput.value = '';
+  callOptionsApiAdd('folie_varianter', value, folieVarianterSelect, newFolieVariantInput);
 });
 
 addFinishBtn.addEventListener('click', () => {
   const value = String(newFinishInput.value || '').trim();
   if (!value) return;
-  ensureOption(finishSelect, value, true);
-  newFinishInput.value = '';
+  callOptionsApiAdd('finish', value, finishSelect, newFinishInput);
 });
+
+async function callOptionsApiAdd(group, value, selectElement, inputElement) {
+  try {
+    await fetch(optionsApiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'add', group, value }),
+    });
+  } catch {
+  }
+
+  ensureOption(selectElement, value, true);
+  if (inputElement) inputElement.value = '';
+}
 
 function toBoolean(value) {
   if (value === true || value === 1) return true;
@@ -339,9 +351,9 @@ function applyProductToForm(product) {
   document.getElementById('komposterbar').checked = toBoolean(extra.komposterbar ?? false);
   changeLogInput.value = String(extra.change_log ?? '');
   loadSmagsvarianterOptions(selectedSmagsvarianter);
-  loadReusableList('formvarianter', 'formvarianter', formVarianterSelect, selectedFormVarianter);
-  loadReusableList('folievarianter', 'folievarianter', folieVarianterSelect, selectedFolieVarianter);
-  loadReusableList('finish', 'finish', finishSelect, selectedFinish);
+  loadReusableList('form_varianter', formVarianterSelect, selectedFormVarianter);
+  loadReusableList('folie_varianter', folieVarianterSelect, selectedFolieVarianter);
+  loadReusableList('finish', finishSelect, selectedFinish);
 
   dynamicFieldsContainer.innerHTML = '';
   for (const [key, value] of Object.entries(extra)) {

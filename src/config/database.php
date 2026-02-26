@@ -99,4 +99,15 @@ function ensureSchema(PDO $pdo): void
                     INDEX idx_logs_sheet_name (sheet_name)
                 )
         ');
+
+            $pdo->exec('
+                CREATE TABLE IF NOT EXISTS managed_options (
+                  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                  option_group VARCHAR(80) NOT NULL,
+                  option_value VARCHAR(255) NOT NULL,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  UNIQUE KEY uniq_group_value (option_group, option_value),
+                  INDEX idx_option_group (option_group)
+                )
+            ');
 }
