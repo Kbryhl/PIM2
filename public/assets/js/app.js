@@ -126,7 +126,7 @@ async function loadProducts() {
       <td>${escapeHtml(item.product_name || '-')}</td>
       <td>${escapeHtml(item.category || '-')}</td>
       <td>${escapeHtml(price)}</td>
-      <td><a class="link-btn" href="product.php?id=${item.id}">Open</a></td>
+      <td><a class="link-btn" href="edit-product.php?id=${item.id}">Edit</a></td>
     `;
 
     tableBody.appendChild(row);

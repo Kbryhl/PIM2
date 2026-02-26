@@ -97,6 +97,70 @@ try {
             exit;
         }
 
+        if ($action === 'update') {
+            $id = (int) ($payload['id'] ?? $_POST['id'] ?? 0);
+            if ($id <= 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'id is required']);
+                exit;
+            }
+
+            $row = [
+                'sheet_name' => trim((string) ($payload['sheet_name'] ?? $_POST['sheet_name'] ?? 'SIGDETSØDT')),
+                'sku' => trim((string) ($payload['sku'] ?? $_POST['sku'] ?? '')),
+                'product_name' => trim((string) ($payload['product_name'] ?? $_POST['product_name'] ?? '')),
+                'active' => $payload['active'] ?? $_POST['active'] ?? '',
+                'barcode' => trim((string) ($payload['barcode'] ?? $_POST['barcode'] ?? '')),
+                'hostedshop_id' => trim((string) ($payload['hostedshop_id'] ?? $_POST['hostedshop_id'] ?? '')),
+                'supplier' => trim((string) ($payload['supplier'] ?? $_POST['supplier'] ?? '')),
+                'brand' => trim((string) ($payload['brand'] ?? $_POST['brand'] ?? '')),
+                'net_weight_grams' => trim((string) ($payload['net_weight_grams'] ?? $_POST['net_weight_grams'] ?? '')),
+                'gross_weight_grams' => trim((string) ($payload['gross_weight_grams'] ?? $_POST['gross_weight_grams'] ?? '')),
+                'holdbarhed_months' => trim((string) ($payload['holdbarhed_months'] ?? $_POST['holdbarhed_months'] ?? '')),
+                'glutenfri' => $payload['glutenfri'] ?? $_POST['glutenfri'] ?? '',
+                'veggie' => $payload['veggie'] ?? $_POST['veggie'] ?? '',
+                'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
+                'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
+                'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
+                'category' => trim((string) ($payload['category'] ?? $_POST['category'] ?? '')),
+                'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
+                'currency' => trim((string) ($payload['currency'] ?? $_POST['currency'] ?? '')),
+                'weight' => trim((string) ($payload['weight'] ?? $_POST['weight'] ?? '')),
+                'dimensions' => trim((string) ($payload['dimensions'] ?? $_POST['dimensions'] ?? '')),
+                'shipping_info' => trim((string) ($payload['shipping_info'] ?? $_POST['shipping_info'] ?? '')),
+            ];
+
+            if (($row['product_name'] ?? '') === '') {
+                http_response_code(400);
+                echo json_encode(['error' => 'product_name is required']);
+                exit;
+            }
+
+            $saved = $repository->updateProductById($id, $row);
+            if (!$saved) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Could not update product']);
+                exit;
+            }
+
+            $updatedProduct = $repository->getProductById($id);
+            $updatedExtraData = is_array($updatedProduct['extra_data'] ?? null) ? $updatedProduct['extra_data'] : [];
+
+            echo json_encode([
+                'data' => [
+                    'saved' => true,
+                    'id' => $id,
+                    'sheet_name' => $updatedProduct['sheet_name'] ?? null,
+                    'change_log' => $updatedExtraData['change_log'] ?? null,
+                    'tara_weight_grams' => $updatedExtraData['tara_weight_grams'] ?? null,
+                    'holdbarhed_text' => $updatedExtraData['holdbarhed_text'] ?? null,
+                    'product_photo_url' => $updatedExtraData['product_photo_url'] ?? null,
+                    'datablad_url' => $updatedExtraData['datablad_url'] ?? null,
+                ],
+            ]);
+            exit;
+        }
+
         http_response_code(400);
         echo json_encode(['error' => 'Unsupported action']);
         exit;

@@ -135,6 +135,72 @@ final class ProductRepository
         ]);
     }
 
+    public function updateProductById(int $id, array $row): bool
+    {
+        if ($id <= 0) {
+            return false;
+        }
+
+        $existing = $this->getProductById($id);
+        if ($existing === null) {
+            return false;
+        }
+
+        $sheetName = trim((string) ($row['sheet_name'] ?? $existing['sheet_name'] ?? 'SIGDETSØDT'));
+        if ($sheetName === '') {
+            $sheetName = 'SIGDETSØDT';
+        }
+
+        $normalized = $this->normalizeRow($row, $sheetName);
+
+        $sku = $normalized['sku'] ?? $this->toNullableString($existing['sku'] ?? null);
+        $productName = $normalized['product_name'] ?? $this->toNullableString($existing['product_name'] ?? null);
+
+        if (!$productName) {
+            return false;
+        }
+
+        $managedMeta = $this->buildManagedMeta($normalized, $existing);
+        $extraData = is_array($normalized['extra_data'] ?? null) ? $normalized['extra_data'] : [];
+        if (is_array($managedMeta)) {
+            $extraData = array_merge($extraData, $managedMeta);
+        }
+
+        $sql = '
+            UPDATE products
+            SET
+                sheet_name = :sheet_name,
+                sku = :sku,
+                product_name = :product_name,
+                description = :description,
+                category = :category,
+                price = :price,
+                currency = :currency,
+                weight = :weight,
+                dimensions = :dimensions,
+                shipping_info = :shipping_info,
+                extra_data = :extra_data
+            WHERE id = :id
+        ';
+
+        $stmt = $this->pdo->prepare($sql);
+
+        return $stmt->execute([
+            'id' => $id,
+            'sheet_name' => $sheetName,
+            'sku' => $sku,
+            'product_name' => $productName,
+            'description' => $normalized['description'] ?? $this->toNullableString($existing['description'] ?? null),
+            'category' => $normalized['category'] ?? $this->toNullableString($existing['category'] ?? null),
+            'price' => $this->toNullableDecimal($normalized['price'] ?? ($existing['price'] ?? null)),
+            'currency' => $normalized['currency'] ?? $this->toNullableString($existing['currency'] ?? null),
+            'weight' => $normalized['weight'] ?? $this->toNullableString($existing['weight'] ?? null),
+            'dimensions' => $normalized['dimensions'] ?? $this->toNullableString($existing['dimensions'] ?? null),
+            'shipping_info' => $normalized['shipping_info'] ?? $this->toNullableString($existing['shipping_info'] ?? null),
+            'extra_data' => json_encode($extraData, JSON_UNESCAPED_UNICODE),
+        ]);
+    }
+
     public function getProductBySheetAndSku(string $sheetName, ?string $sku): ?array
     {
         return $this->findBySheetAndSku($sheetName, $sku);
