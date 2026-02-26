@@ -48,7 +48,8 @@
                             <th>SKU</th>
                             <th>Name</th>
                             <th>Category</th>
-                            <th>Price</th>
+                            <th>Active</th>
+                            <th>Photo</th>
                             <th></th>
                         </tr>
                     </thead>

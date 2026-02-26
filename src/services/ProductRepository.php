@@ -39,7 +39,7 @@ final class ProductRepository
         $total = (int) $countStmt->fetchColumn();
 
         $sql = "
-            SELECT id, sheet_name, sku, product_name, description, category, price, currency, weight, dimensions, shipping_info, updated_at
+            SELECT id, sheet_name, sku, product_name, description, category, extra_data, updated_at
             FROM products
             {$whereSql}
             ORDER BY updated_at DESC, id DESC
@@ -56,6 +56,21 @@ final class ProductRepository
 
         $stmt->execute();
         $items = $stmt->fetchAll();
+
+        foreach ($items as &$item) {
+            $extraData = [];
+            if (!empty($item['extra_data'])) {
+                $decoded = json_decode((string) $item['extra_data'], true);
+                if (is_array($decoded)) {
+                    $extraData = $decoded;
+                }
+            }
+
+            $item['active'] = (int) ($extraData['active'] ?? 0) === 1;
+            $item['product_photo_url'] = (string) ($extraData['product_photo_url'] ?? '');
+            unset($item['extra_data']);
+        }
+        unset($item);
 
         return [
             'items' => $items,

@@ -227,3 +227,11 @@ th {
     color: var(--primary);
     text-decoration: none;
 }
+
+.thumb {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 0.4rem;
+    border: 1px solid var(--line);
+}

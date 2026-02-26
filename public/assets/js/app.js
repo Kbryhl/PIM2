@@ -108,7 +108,7 @@ async function loadProducts() {
   tableBody.innerHTML = '';
 
   if (!items.length) {
-    tableBody.innerHTML = '<tr><td colspan="6">No products found.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="7">No products found.</td></tr>';
     updateDeleteButtonState();
     updateSelectAllState(items);
     return;
@@ -116,16 +116,20 @@ async function loadProducts() {
 
   for (const item of items) {
     const row = document.createElement('tr');
-    const price = item.price ? `${item.price} ${item.currency || ''}` : '-';
     const numericId = Number(item.id);
     const checked = selectedIds.has(numericId) ? 'checked' : '';
+    const activeLabel = item.active ? 'Active' : 'Inactive';
+    const photoHtml = item.product_photo_url
+      ? `<a href="${encodeURI(item.product_photo_url)}" target="_blank" rel="noopener noreferrer"><img class="thumb" src="${encodeURI(item.product_photo_url)}" alt="${escapeHtml(item.product_name || 'Product photo')}" /></a>`
+      : '-';
 
     row.innerHTML = `
       <td><input type="checkbox" class="row-select" data-id="${numericId}" ${checked} aria-label="Select row ${numericId}" /></td>
       <td>${escapeHtml(item.sku || '-')}</td>
       <td>${escapeHtml(item.product_name || '-')}</td>
       <td>${escapeHtml(item.category || '-')}</td>
-      <td>${escapeHtml(price)}</td>
+      <td>${activeLabel}</td>
+      <td>${photoHtml}</td>
       <td><a class="link-btn" href="edit-product.php?id=${item.id}">Edit</a></td>
     `;
 
