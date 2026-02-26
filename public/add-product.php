@@ -66,6 +66,38 @@
                 <label for="taraWeightGrams">Tara Weight (read only, grams)</label>
                 <input id="taraWeightGrams" name="tara_weight_grams" type="number" readonly placeholder="Auto calculated" />
 
+                <label for="holdbarhedMonths">Holdbarhed (måneder)</label>
+                <input id="holdbarhedMonths" name="holdbarhed_months" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="holdbarhedText">Holdbarhed tekst (read only)</label>
+                <input id="holdbarhedText" name="holdbarhed_text" type="text" readonly placeholder="ca. X måneder, ved korrekt opbevaring" />
+
+                <label class="checkbox-field" for="glutenfri">
+                    <input id="glutenfri" name="glutenfri" type="checkbox" />
+                    <span>Glutenfri</span>
+                </label>
+
+                <label class="checkbox-field" for="veggie">
+                    <input id="veggie" name="veggie" type="checkbox" />
+                    <span>Veggie</span>
+                </label>
+
+                <label class="checkbox-field" for="vegan">
+                    <input id="vegan" name="vegan" type="checkbox" />
+                    <span>Vegan</span>
+                </label>
+
+                <label class="checkbox-field" for="komposterbar">
+                    <input id="komposterbar" name="komposterbar" type="checkbox" />
+                    <span>Komposterbar</span>
+                </label>
+
+                <label for="productPhotoUrl">Product Photo URL (read only)</label>
+                <input id="productPhotoUrl" name="product_photo_url" type="url" readonly placeholder="https://filbank.dk/database/sigdetsoedt/produktfoto/SKU.png" />
+
+                <label for="databladUrl">Datablad URL (read only)</label>
+                <input id="databladUrl" name="datablad_url" type="url" readonly placeholder="https://filbank.dk/database/sigdetsoedt/datablade/SKU.pdf" />
+
                 <label for="description">Description</label>
                 <textarea id="description" name="description" rows="4" placeholder="Description"></textarea>
 

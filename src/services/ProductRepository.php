@@ -226,6 +226,11 @@ final class ProductRepository
             'brand' => $this->pickMappedValue($map, $aliases, 'brand'),
             'net_weight_grams' => $this->pickMappedValue($map, $aliases, 'net_weight_grams'),
             'gross_weight_grams' => $this->pickMappedValue($map, $aliases, 'gross_weight_grams'),
+            'holdbarhed_months' => $this->pickMappedValue($map, $aliases, 'holdbarhed_months'),
+            'glutenfri' => $this->pickMappedValue($map, $aliases, 'glutenfri'),
+            'veggie' => $this->pickMappedValue($map, $aliases, 'veggie'),
+            'vegan' => $this->pickMappedValue($map, $aliases, 'vegan'),
+            'komposterbar' => $this->pickMappedValue($map, $aliases, 'komposterbar'),
             'extra_data' => $extraData,
         ];
     }
@@ -263,9 +268,19 @@ final class ProductRepository
         $netWeight = $this->toNullableInt($normalized['net_weight_grams'] ?? null);
         $grossWeight = $this->toNullableInt($normalized['gross_weight_grams'] ?? null);
         $taraWeight = $this->calculateTara($grossWeight, $netWeight);
+        $holdbarhedMonths = $this->toNullableInt($normalized['holdbarhed_months'] ?? null);
+        $holdbarhedText = $this->buildHoldbarhedText($holdbarhedMonths);
+        $glutenfri = $this->toBooleanFlag($normalized['glutenfri'] ?? null);
+        $veggie = $this->toBooleanFlag($normalized['veggie'] ?? null);
+        $vegan = $this->toBooleanFlag($normalized['vegan'] ?? null);
+        $komposterbar = $this->toBooleanFlag($normalized['komposterbar'] ?? null);
+
+        $sku = $this->toNullableString($normalized['sku'] ?? null);
+        $productPhotoUrl = $this->buildSigdetsoedtAssetUrl($sku, 'produktfoto', 'png');
+        $databladUrl = $this->buildSigdetsoedtAssetUrl($sku, 'datablade', 'pdf');
 
         $currentSnapshot = [
-            'sku' => $this->toNullableString($normalized['sku'] ?? null),
+            'sku' => $sku,
             'product_name' => $this->toNullableString($normalized['product_name'] ?? null),
             'active' => $active,
             'barcode' => $barcode,
@@ -275,6 +290,14 @@ final class ProductRepository
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
+            'holdbarhed_months' => $holdbarhedMonths,
+            'holdbarhed_text' => $holdbarhedText,
+            'glutenfri' => $glutenfri,
+            'veggie' => $veggie,
+            'vegan' => $vegan,
+            'komposterbar' => $komposterbar,
+            'product_photo_url' => $productPhotoUrl,
+            'datablad_url' => $databladUrl,
         ];
 
         $previousSnapshot = $this->extractSnapshotFromExisting($existingProduct);
@@ -289,6 +312,14 @@ final class ProductRepository
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
+            'holdbarhed_months' => $holdbarhedMonths,
+            'holdbarhed_text' => $holdbarhedText,
+            'glutenfri' => $glutenfri,
+            'veggie' => $veggie,
+            'vegan' => $vegan,
+            'komposterbar' => $komposterbar,
+            'product_photo_url' => $productPhotoUrl,
+            'datablad_url' => $databladUrl,
             'change_log' => $changeLog,
             'last_saved_at' => date(DATE_ATOM),
         ];
@@ -313,6 +344,14 @@ final class ProductRepository
             'net_weight_grams' => $this->toNullableInt($extra['net_weight_grams'] ?? null),
             'gross_weight_grams' => $this->toNullableInt($extra['gross_weight_grams'] ?? null),
             'tara_weight_grams' => $this->toNullableInt($extra['tara_weight_grams'] ?? null),
+            'holdbarhed_months' => $this->toNullableInt($extra['holdbarhed_months'] ?? null),
+            'holdbarhed_text' => $this->toNullableString($extra['holdbarhed_text'] ?? null),
+            'glutenfri' => $this->toNullableInt($extra['glutenfri'] ?? null),
+            'veggie' => $this->toNullableInt($extra['veggie'] ?? null),
+            'vegan' => $this->toNullableInt($extra['vegan'] ?? null),
+            'komposterbar' => $this->toNullableInt($extra['komposterbar'] ?? null),
+            'product_photo_url' => $this->toNullableString($extra['product_photo_url'] ?? null),
+            'datablad_url' => $this->toNullableString($extra['datablad_url'] ?? null),
         ];
     }
 
@@ -334,6 +373,14 @@ final class ProductRepository
             'net_weight_grams' => 'Nettovægt',
             'gross_weight_grams' => 'Bruttovægt',
             'tara_weight_grams' => 'Tara Weight',
+            'holdbarhed_months' => 'Holdbarhed',
+            'holdbarhed_text' => 'Holdbarhed tekst',
+            'glutenfri' => 'Glutenfri',
+            'veggie' => 'Veggie',
+            'vegan' => 'Vegan',
+            'komposterbar' => 'Komposterbar',
+            'product_photo_url' => 'Product Photo',
+            'datablad_url' => 'Datablad',
         ];
 
         $changed = [];
@@ -390,6 +437,27 @@ final class ProductRepository
         }
 
         return $grossWeight - $netWeight;
+    }
+
+    private function buildHoldbarhedText(?int $months): ?string
+    {
+        if ($months === null || $months <= 0) {
+            return null;
+        }
+
+        return 'ca. ' . $months . ' måneder, ved korrekt opbevaring';
+    }
+
+    private function buildSigdetsoedtAssetUrl(?string $sku, string $folder, string $extension): ?string
+    {
+        $trimmedSku = trim((string) $sku);
+        if ($trimmedSku === '') {
+            return null;
+        }
+
+        $encodedSku = rawurlencode($trimmedSku);
+
+        return 'https://filbank.dk/database/sigdetsoedt/' . $folder . '/' . $encodedSku . '.' . $extension;
     }
 
     private function getAliasesForSheet(string $sheetName): array

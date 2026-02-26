@@ -4,6 +4,11 @@ const resultBox = document.getElementById('addProductResult');
 const netWeightInput = document.getElementById('netWeightGrams');
 const grossWeightInput = document.getElementById('grossWeightGrams');
 const taraWeightInput = document.getElementById('taraWeightGrams');
+const skuInput = document.getElementById('sku');
+const holdbarhedMonthsInput = document.getElementById('holdbarhedMonths');
+const holdbarhedTextInput = document.getElementById('holdbarhedText');
+const productPhotoUrlInput = document.getElementById('productPhotoUrl');
+const databladUrlInput = document.getElementById('databladUrl');
 const changeLogInput = document.getElementById('changeLog');
 
 function updateTaraWeight() {
@@ -21,6 +26,26 @@ function updateTaraWeight() {
 netWeightInput.addEventListener('input', updateTaraWeight);
 grossWeightInput.addEventListener('input', updateTaraWeight);
 
+function updateSigdetsoedtAutoFields() {
+  const sku = String(skuInput.value || '').trim();
+  const encodedSku = encodeURIComponent(sku);
+
+  productPhotoUrlInput.value = sku
+    ? `https://filbank.dk/database/sigdetsoedt/produktfoto/${encodedSku}.png`
+    : '';
+  databladUrlInput.value = sku
+    ? `https://filbank.dk/database/sigdetsoedt/datablade/${encodedSku}.pdf`
+    : '';
+
+  const months = Number(holdbarhedMonthsInput.value || 0);
+  holdbarhedTextInput.value = Number.isFinite(months) && months > 0
+    ? `ca. ${months} måneder, ved korrekt opbevaring`
+    : '';
+}
+
+skuInput.addEventListener('input', updateSigdetsoedtAutoFields);
+holdbarhedMonthsInput.addEventListener('input', updateSigdetsoedtAutoFields);
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -37,6 +62,11 @@ form.addEventListener('submit', async (event) => {
     brand: formData.get('brand') || '',
     net_weight_grams: formData.get('net_weight_grams') || '',
     gross_weight_grams: formData.get('gross_weight_grams') || '',
+    holdbarhed_months: formData.get('holdbarhed_months') || '',
+    glutenfri: document.getElementById('glutenfri').checked,
+    veggie: document.getElementById('veggie').checked,
+    vegan: document.getElementById('vegan').checked,
+    komposterbar: document.getElementById('komposterbar').checked,
     description: formData.get('description') || '',
     category: formData.get('category') || '',
     price: formData.get('price') || '',
@@ -71,11 +101,17 @@ form.addEventListener('submit', async (event) => {
 
     changeLogInput.value = String(result.data.change_log || 'Saved.');
     taraWeightInput.value = String(result.data.tara_weight_grams ?? taraWeightInput.value);
+    holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? holdbarhedTextInput.value);
+    productPhotoUrlInput.value = String(result.data.product_photo_url ?? productPhotoUrlInput.value);
+    databladUrlInput.value = String(result.data.datablad_url ?? databladUrlInput.value);
 
     form.reset();
     document.getElementById('sheetName').value = 'SIGDETSØDT';
     changeLogInput.value = String(result.data.change_log || 'Saved.');
     taraWeightInput.value = String(result.data.tara_weight_grams ?? '');
+    holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? '');
+    productPhotoUrlInput.value = String(result.data.product_photo_url ?? '');
+    databladUrlInput.value = String(result.data.datablad_url ?? '');
   } catch (error) {
     resultBox.textContent = JSON.stringify({
       error: 'Could not save product.',
@@ -83,3 +119,5 @@ form.addEventListener('submit', async (event) => {
     }, null, 2);
   }
 });
+
+updateSigdetsoedtAutoFields();

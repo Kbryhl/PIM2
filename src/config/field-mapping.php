@@ -52,6 +52,21 @@ return [
         'gross_weight_grams' => [
             'gross_weight_grams', 'bruttovaegt', 'bruttovægt', 'gross_weight', 'brutto_weight',
         ],
+        'holdbarhed_months' => [
+            'holdbarhed_months', 'holdbarhed', 'shelf_life_months',
+        ],
+        'glutenfri' => [
+            'glutenfri', 'gluten_free',
+        ],
+        'veggie' => [
+            'veggie', 'vegetarian',
+        ],
+        'vegan' => [
+            'vegan',
+        ],
+        'komposterbar' => [
+            'komposterbar', 'compostable',
+        ],
     ],
     'sheets' => [
         'aquadana' => [
@@ -82,6 +97,11 @@ return [
             'brand' => ['sigdetsoedt_brand', 'maerke', 'brand'],
             'net_weight_grams' => ['sigdetsoedt_nettovaegt', 'nettovaegt', 'net_weight_grams'],
             'gross_weight_grams' => ['sigdetsoedt_bruttovaegt', 'bruttovaegt', 'gross_weight_grams'],
+            'holdbarhed_months' => ['sigdetsoedt_holdbarhed', 'holdbarhed_months', 'holdbarhed'],
+            'glutenfri' => ['sigdetsoedt_glutenfri', 'glutenfri'],
+            'veggie' => ['sigdetsoedt_veggie', 'veggie'],
+            'vegan' => ['sigdetsoedt_vegan', 'vegan'],
+            'komposterbar' => ['sigdetsoedt_komposterbar', 'komposterbar'],
         ],
     ],
 ];

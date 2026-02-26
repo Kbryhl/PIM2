@@ -53,6 +53,11 @@ try {
                 'brand' => trim((string) ($payload['brand'] ?? $_POST['brand'] ?? '')),
                 'net_weight_grams' => trim((string) ($payload['net_weight_grams'] ?? $_POST['net_weight_grams'] ?? '')),
                 'gross_weight_grams' => trim((string) ($payload['gross_weight_grams'] ?? $_POST['gross_weight_grams'] ?? '')),
+                'holdbarhed_months' => trim((string) ($payload['holdbarhed_months'] ?? $_POST['holdbarhed_months'] ?? '')),
+                'glutenfri' => $payload['glutenfri'] ?? $_POST['glutenfri'] ?? '',
+                'veggie' => $payload['veggie'] ?? $_POST['veggie'] ?? '',
+                'vegan' => $payload['vegan'] ?? $_POST['vegan'] ?? '',
+                'komposterbar' => $payload['komposterbar'] ?? $_POST['komposterbar'] ?? '',
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => trim((string) ($payload['category'] ?? $_POST['category'] ?? '')),
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
@@ -84,6 +89,9 @@ try {
                     'sheet_name' => $sheetName,
                     'change_log' => $savedExtraData['change_log'] ?? null,
                     'tara_weight_grams' => $savedExtraData['tara_weight_grams'] ?? null,
+                    'holdbarhed_text' => $savedExtraData['holdbarhed_text'] ?? null,
+                    'product_photo_url' => $savedExtraData['product_photo_url'] ?? null,
+                    'datablad_url' => $savedExtraData['datablad_url'] ?? null,
                 ],
             ]);
             exit;
