@@ -34,6 +34,7 @@
             <div class="table-head">
                 <h2>Products</h2>
                 <div class="table-actions">
+                    <a href="add-product.php" class="link-btn action-link">ADD PRODUCT</a>
                     <button id="deleteSelectedBtn" type="button">Delete Selected</button>
                     <span id="resultInfo">Loading...</span>
                 </div>
@@ -44,8 +45,6 @@
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="selectAllRows" aria-label="Select all rows" /></th>
-                            <th>ID</th>
-                            <th>Sheet</th>
                             <th>SKU</th>
                             <th>Name</th>
                             <th>Category</th>

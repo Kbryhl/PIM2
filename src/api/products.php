@@ -21,24 +21,64 @@ try {
 
         $action = trim((string) ($payload['action'] ?? $_POST['action'] ?? ''));
 
-        if ($action !== 'delete') {
-            http_response_code(400);
-            echo json_encode(['error' => 'Unsupported action']);
+        if ($action === 'delete') {
+            $ids = $payload['ids'] ?? $_POST['ids'] ?? [];
+            if (!is_array($ids)) {
+                $ids = [];
+            }
+
+            $deletedCount = $repository->deleteProductsByIds($ids);
+
+            echo json_encode([
+                'data' => [
+                    'deletedCount' => $deletedCount,
+                ],
+            ]);
             exit;
         }
 
-        $ids = $payload['ids'] ?? $_POST['ids'] ?? [];
-        if (!is_array($ids)) {
-            $ids = [];
+        if ($action === 'create') {
+            $sheetName = trim((string) ($payload['sheet_name'] ?? $_POST['sheet_name'] ?? 'SIGDETSØDT'));
+            if ($sheetName === '') {
+                $sheetName = 'SIGDETSØDT';
+            }
+
+            $row = [
+                'sku' => trim((string) ($payload['sku'] ?? $_POST['sku'] ?? '')),
+                'product_name' => trim((string) ($payload['product_name'] ?? $_POST['product_name'] ?? '')),
+                'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
+                'category' => trim((string) ($payload['category'] ?? $_POST['category'] ?? '')),
+                'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
+                'currency' => trim((string) ($payload['currency'] ?? $_POST['currency'] ?? '')),
+                'weight' => trim((string) ($payload['weight'] ?? $_POST['weight'] ?? '')),
+                'dimensions' => trim((string) ($payload['dimensions'] ?? $_POST['dimensions'] ?? '')),
+                'shipping_info' => trim((string) ($payload['shipping_info'] ?? $_POST['shipping_info'] ?? '')),
+            ];
+
+            if (($row['product_name'] ?? '') === '') {
+                http_response_code(400);
+                echo json_encode(['error' => 'product_name is required']);
+                exit;
+            }
+
+            $saved = $repository->upsertProduct($row, $sheetName);
+            if (!$saved) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Could not save product']);
+                exit;
+            }
+
+            echo json_encode([
+                'data' => [
+                    'saved' => true,
+                    'sheet_name' => $sheetName,
+                ],
+            ]);
+            exit;
         }
 
-        $deletedCount = $repository->deleteProductsByIds($ids);
-
-        echo json_encode([
-            'data' => [
-                'deletedCount' => $deletedCount,
-            ],
-        ]);
+        http_response_code(400);
+        echo json_encode(['error' => 'Unsupported action']);
         exit;
     }
 

@@ -108,7 +108,7 @@ async function loadProducts() {
   tableBody.innerHTML = '';
 
   if (!items.length) {
-    tableBody.innerHTML = '<tr><td colspan="8">No products found.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="6">No products found.</td></tr>';
     updateDeleteButtonState();
     updateSelectAllState(items);
     return;
@@ -122,8 +122,6 @@ async function loadProducts() {
 
     row.innerHTML = `
       <td><input type="checkbox" class="row-select" data-id="${numericId}" ${checked} aria-label="Select row ${numericId}" /></td>
-      <td>${item.id}</td>
-      <td>${escapeHtml(item.sheet_name || '-')}</td>
       <td>${escapeHtml(item.sku || '-')}</td>
       <td>${escapeHtml(item.product_name || '-')}</td>
       <td>${escapeHtml(item.category || '-')}</td>
