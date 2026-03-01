@@ -65,10 +65,6 @@ try {
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
-                'currency' => trim((string) ($payload['currency'] ?? $_POST['currency'] ?? '')),
-                'weight' => trim((string) ($payload['weight'] ?? $_POST['weight'] ?? '')),
-                'dimensions' => trim((string) ($payload['dimensions'] ?? $_POST['dimensions'] ?? '')),
-                'shipping_info' => trim((string) ($payload['shipping_info'] ?? $_POST['shipping_info'] ?? '')),
             ];
 
             if (($row['product_name'] ?? '') === '') {
@@ -136,10 +132,6 @@ try {
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
-                'currency' => trim((string) ($payload['currency'] ?? $_POST['currency'] ?? '')),
-                'weight' => trim((string) ($payload['weight'] ?? $_POST['weight'] ?? '')),
-                'dimensions' => trim((string) ($payload['dimensions'] ?? $_POST['dimensions'] ?? '')),
-                'shipping_info' => trim((string) ($payload['shipping_info'] ?? $_POST['shipping_info'] ?? '')),
             ];
 
             if (($row['product_name'] ?? '') === '') {

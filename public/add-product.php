@@ -140,18 +140,6 @@
                 <label for="price">Price</label>
                 <input id="price" name="price" type="text" placeholder="0.00" />
 
-                <label for="currency">Currency</label>
-                <input id="currency" name="currency" type="text" placeholder="DKK" />
-
-                <label for="weight">Weight</label>
-                <input id="weight" name="weight" type="text" placeholder="Weight" />
-
-                <label for="dimensions">Dimensions</label>
-                <input id="dimensions" name="dimensions" type="text" placeholder="L x W x H" />
-
-                <label for="shippingInfo">Shipping Info</label>
-                <textarea id="shippingInfo" name="shipping_info" rows="3" placeholder="Shipping details"></textarea>
-
                 <button type="submit">Save Product</button>
             </form>
 

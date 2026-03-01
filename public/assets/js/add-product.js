@@ -250,10 +250,6 @@ form.addEventListener('submit', async (event) => {
     description: formData.get('description') || '',
     category: getSelectedCategories(),
     price: formData.get('price') || '',
-    currency: formData.get('currency') || '',
-    weight: formData.get('weight') || '',
-    dimensions: formData.get('dimensions') || '',
-    shipping_info: formData.get('shipping_info') || '',
   };
 
   resultBox.textContent = 'Saving product...';

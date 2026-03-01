@@ -326,10 +326,6 @@ function applyProductToForm(product) {
   const selectedCategories = parseCategoryString(product.category || '');
   loadCategoryOptions(selectedCategories);
   document.getElementById('price').value = product.price || '';
-  document.getElementById('currency').value = product.currency || '';
-  document.getElementById('weight').value = product.weight || '';
-  document.getElementById('dimensions').value = product.dimensions || '';
-  document.getElementById('shippingInfo').value = product.shipping_info || '';
 
   const extra = (product.extra_data && typeof product.extra_data === 'object') ? product.extra_data : {};
   const selectedSmagsvarianter = parseList(extra.smagsvarianter || []);
@@ -427,10 +423,6 @@ form.addEventListener('submit', async (event) => {
     description: formData.get('description') || '',
     category: getSelectedCategories(),
     price: formData.get('price') || '',
-    currency: formData.get('currency') || '',
-    weight: formData.get('weight') || '',
-    dimensions: formData.get('dimensions') || '',
-    shipping_info: formData.get('shipping_info') || '',
   };
 
   for (const input of dynamicFieldsContainer.querySelectorAll('input')) {

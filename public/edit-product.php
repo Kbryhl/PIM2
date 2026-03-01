@@ -143,18 +143,6 @@
                 <label for="price">Price</label>
                 <input id="price" name="price" type="text" />
 
-                <label for="currency">Currency</label>
-                <input id="currency" name="currency" type="text" />
-
-                <label for="weight">Weight</label>
-                <input id="weight" name="weight" type="text" />
-
-                <label for="dimensions">Dimensions</label>
-                <input id="dimensions" name="dimensions" type="text" />
-
-                <label for="shippingInfo">Shipping Info</label>
-                <textarea id="shippingInfo" name="shipping_info" rows="3"></textarea>
-
                 <div id="dynamicFields"></div>
 
                 <button type="submit">Save Changes</button>
