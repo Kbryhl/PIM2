@@ -181,6 +181,34 @@
                 <label for="price">Price</label>
                 <input id="price" name="price" type="text" placeholder="0.00" />
 
+                <label for="produktMaal">Produkt mål</label>
+                <input id="produktMaal" name="produkt_maal" type="text" placeholder="Fx 10 x 20 x 30 cm" />
+
+                <label for="opstartPr">Opstart pr</label>
+                <select id="opstartPr" name="opstart_pr">
+                    <option value="">Select</option>
+                    <option value="Kg">Kg</option>
+                    <option value="Stk">Stk</option>
+                </select>
+
+                <label for="opstartGenbestil">Opstart Genbestil</label>
+                <input id="opstartGenbestil" name="opstart_genbestil" type="number" min="0" step="0.01" placeholder="0" />
+
+                <label for="opstartGenbestilAvance">Opstart Genbestil avance (%)</label>
+                <input id="opstartGenbestilAvance" name="opstart_genbestil_avance" type="number" min="0" step="0.01" placeholder="0" />
+
+                <label for="opstartGenbestilVejl">Opstart Genbestil Vejl (read only)</label>
+                <input id="opstartGenbestilVejl" name="opstart_genbestil_vejl" type="number" readonly placeholder="Auto calculated" />
+
+                <label for="opstart">Opstart</label>
+                <input id="opstart" name="opstart" type="number" min="0" step="0.01" placeholder="0" />
+
+                <label for="opstartAvance">Opstart avance (%)</label>
+                <input id="opstartAvance" name="opstart_avance" type="number" min="0" step="0.01" placeholder="0" />
+
+                <label for="opstartVejl">Opstart Vejl (read only)</label>
+                <input id="opstartVejl" name="opstart_vejl" type="number" readonly placeholder="Auto calculated" />
+
                 <button type="submit">Save Product</button>
             </form>
 

@@ -49,6 +49,14 @@ const knownFields = new Set([
   'leveringstid',
   'produktionstid',
   'levering_text',
+  'produkt_maal',
+  'opstart_pr',
+  'opstart_genbestil',
+  'opstart_genbestil_avance',
+  'opstart_genbestil_vejl',
+  'opstart',
+  'opstart_avance',
+  'opstart_vejl',
   'net_weight_grams',
   'gross_weight_grams',
   'holdbarhed_months',
@@ -67,6 +75,12 @@ const holdbarhedTextInput = document.getElementById('holdbarhedText');
 const leveringstidInput = document.getElementById('leveringstid');
 const produktionstidInput = document.getElementById('produktionstid');
 const leveringTextInput = document.getElementById('leveringText');
+const opstartGenbestilInput = document.getElementById('opstartGenbestil');
+const opstartGenbestilAvanceInput = document.getElementById('opstartGenbestilAvance');
+const opstartGenbestilVejlInput = document.getElementById('opstartGenbestilVejl');
+const opstartInput = document.getElementById('opstart');
+const opstartAvanceInput = document.getElementById('opstartAvance');
+const opstartVejlInput = document.getElementById('opstartVejl');
 const productPhotoUrlInput = document.getElementById('productPhotoUrl');
 const databladUrlInput = document.getElementById('databladUrl');
 const changeLogInput = document.getElementById('changeLog');
@@ -312,6 +326,28 @@ function updateCalculatedReadOnlyFields() {
     leveringTextInput.value = '';
   }
 
+  const opstartGenbestil = Number(opstartGenbestilInput.value || 0);
+  const opstartGenbestilAvance = Number(opstartGenbestilAvanceInput.value || 0);
+  const hasOpstartGenbestil = String(opstartGenbestilInput.value || '').trim() !== '';
+  const hasOpstartGenbestilAvance = String(opstartGenbestilAvanceInput.value || '').trim() !== '';
+  if (hasOpstartGenbestil || hasOpstartGenbestilAvance) {
+    const sum = (Number.isFinite(opstartGenbestil) ? opstartGenbestil : 0) + (Number.isFinite(opstartGenbestilAvance) ? opstartGenbestilAvance : 0);
+    opstartGenbestilVejlInput.value = sum.toFixed(2);
+  } else {
+    opstartGenbestilVejlInput.value = '';
+  }
+
+  const opstart = Number(opstartInput.value || 0);
+  const opstartAvance = Number(opstartAvanceInput.value || 0);
+  const hasOpstart = String(opstartInput.value || '').trim() !== '';
+  const hasOpstartAvance = String(opstartAvanceInput.value || '').trim() !== '';
+  if (hasOpstart || hasOpstartAvance) {
+    const sum = (Number.isFinite(opstart) ? opstart : 0) + (Number.isFinite(opstartAvance) ? opstartAvance : 0);
+    opstartVejlInput.value = sum.toFixed(2);
+  } else {
+    opstartVejlInput.value = '';
+  }
+
   const sku = String(skuInput.value || '').trim();
   const encodedSku = encodeURIComponent(sku);
   productPhotoUrlInput.value = sku
@@ -327,6 +363,10 @@ grossWeightInput.addEventListener('input', updateCalculatedReadOnlyFields);
 holdbarhedMonthsInput.addEventListener('input', updateCalculatedReadOnlyFields);
 leveringstidInput.addEventListener('input', updateCalculatedReadOnlyFields);
 produktionstidInput.addEventListener('input', updateCalculatedReadOnlyFields);
+opstartGenbestilInput.addEventListener('input', updateCalculatedReadOnlyFields);
+opstartGenbestilAvanceInput.addEventListener('input', updateCalculatedReadOnlyFields);
+opstartInput.addEventListener('input', updateCalculatedReadOnlyFields);
+opstartAvanceInput.addEventListener('input', updateCalculatedReadOnlyFields);
 skuInput.addEventListener('input', updateCalculatedReadOnlyFields);
 
 function addDynamicField(name, value) {
@@ -388,8 +428,14 @@ function applyProductToForm(product) {
   document.getElementById('inklFragt').checked = toBoolean(extra.inkl_fragt ?? false);
   document.getElementById('bestilInterval').value = String(extra.bestil_interval ?? '');
   document.getElementById('minOrdre').value = String(extra.min_ordre ?? '');
+  document.getElementById('produktMaal').value = String(extra.produkt_maal ?? '');
   document.getElementById('leveringstid').value = String(extra.leveringstid ?? '');
   document.getElementById('produktionstid').value = String(extra.produktionstid ?? '');
+  document.getElementById('opstartPr').value = String(extra.opstart_pr ?? '');
+  document.getElementById('opstartGenbestil').value = String(extra.opstart_genbestil ?? '');
+  document.getElementById('opstartGenbestilAvance').value = String(extra.opstart_genbestil_avance ?? '');
+  document.getElementById('opstart').value = String(extra.opstart ?? '');
+  document.getElementById('opstartAvance').value = String(extra.opstart_avance ?? '');
   document.getElementById('netWeightGrams').value = String(extra.net_weight_grams ?? '');
   document.getElementById('grossWeightGrams').value = String(extra.gross_weight_grams ?? '');
   document.getElementById('holdbarhedMonths').value = String(extra.holdbarhed_months ?? '');
@@ -422,6 +468,12 @@ function applyProductToForm(product) {
   }
   if (extra.levering_text !== undefined && extra.levering_text !== null) {
     leveringTextInput.value = String(extra.levering_text);
+  }
+  if (extra.opstart_genbestil_vejl !== undefined && extra.opstart_genbestil_vejl !== null) {
+    opstartGenbestilVejlInput.value = String(extra.opstart_genbestil_vejl);
+  }
+  if (extra.opstart_vejl !== undefined && extra.opstart_vejl !== null) {
+    opstartVejlInput.value = String(extra.opstart_vejl);
   }
   if (extra.product_photo_url !== undefined && extra.product_photo_url !== null) {
     productPhotoUrlInput.value = String(extra.product_photo_url);
@@ -489,6 +541,12 @@ form.addEventListener('submit', async (event) => {
     description: formData.get('description') || '',
     category: getSelectedCategories(),
     price: formData.get('price') || '',
+    produkt_maal: formData.get('produkt_maal') || '',
+    opstart_pr: formData.get('opstart_pr') || '',
+    opstart_genbestil: formData.get('opstart_genbestil') || '',
+    opstart_genbestil_avance: formData.get('opstart_genbestil_avance') || '',
+    opstart: formData.get('opstart') || '',
+    opstart_avance: formData.get('opstart_avance') || '',
   };
 
   for (const input of dynamicFieldsContainer.querySelectorAll('input')) {
@@ -526,6 +584,12 @@ form.addEventListener('submit', async (event) => {
     }
     if (result.data.levering_text !== undefined) {
       leveringTextInput.value = String(result.data.levering_text ?? '');
+    }
+    if (result.data.opstart_genbestil_vejl !== undefined) {
+      opstartGenbestilVejlInput.value = String(result.data.opstart_genbestil_vejl ?? '');
+    }
+    if (result.data.opstart_vejl !== undefined) {
+      opstartVejlInput.value = String(result.data.opstart_vejl ?? '');
     }
     if (result.data.product_photo_url !== undefined) {
       productPhotoUrlInput.value = String(result.data.product_photo_url ?? '');

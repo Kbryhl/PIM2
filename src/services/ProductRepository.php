@@ -343,6 +343,7 @@ final class ProductRepository
             'description' => $this->pickMappedValue($map, $aliases, 'description'),
             'category' => $this->pickMappedValue($map, $aliases, 'category'),
             'price' => $this->pickMappedValue($map, $aliases, 'price'),
+            'produkt_maal' => $this->pickMappedValue($map, $aliases, 'produkt_maal'),
             'currency' => $this->pickMappedValue($map, $aliases, 'currency'),
             'weight' => $this->pickMappedValue($map, $aliases, 'weight'),
             'dimensions' => $this->pickMappedValue($map, $aliases, 'dimensions'),
@@ -362,6 +363,11 @@ final class ProductRepository
             'min_ordre' => $this->pickMappedValue($map, $aliases, 'min_ordre'),
             'leveringstid' => $this->pickMappedValue($map, $aliases, 'leveringstid'),
             'produktionstid' => $this->pickMappedValue($map, $aliases, 'produktionstid'),
+            'opstart_pr' => $this->pickMappedValue($map, $aliases, 'opstart_pr'),
+            'opstart_genbestil' => $this->pickMappedValue($map, $aliases, 'opstart_genbestil'),
+            'opstart_genbestil_avance' => $this->pickMappedValue($map, $aliases, 'opstart_genbestil_avance'),
+            'opstart' => $this->pickMappedValue($map, $aliases, 'opstart'),
+            'opstart_avance' => $this->pickMappedValue($map, $aliases, 'opstart_avance'),
             'net_weight_grams' => $this->pickMappedValue($map, $aliases, 'net_weight_grams'),
             'gross_weight_grams' => $this->pickMappedValue($map, $aliases, 'gross_weight_grams'),
             'holdbarhed_months' => $this->pickMappedValue($map, $aliases, 'holdbarhed_months'),
@@ -415,9 +421,17 @@ final class ProductRepository
         $bestilInterval = $this->toNullableInt($normalized['bestil_interval'] ?? null);
         $bestilIntervalUnit = $this->toNullableString($normalized['bestil_interval_unit'] ?? null);
         $minOrdre = $this->toNullableInt($normalized['min_ordre'] ?? null);
+        $produktMaal = $this->toNullableString($normalized['produkt_maal'] ?? null);
         $leveringstid = $this->toNullableInt($normalized['leveringstid'] ?? null);
         $produktionstid = $this->toNullableInt($normalized['produktionstid'] ?? null);
         $leveringText = $this->buildLeveringText($leveringstid, $produktionstid);
+        $opstartPr = $this->toNullableString($normalized['opstart_pr'] ?? null);
+        $opstartGenbestil = $this->toNullableFloat($normalized['opstart_genbestil'] ?? null);
+        $opstartGenbestilAvance = $this->toNullableFloat($normalized['opstart_genbestil_avance'] ?? null);
+        $opstartGenbestilVejl = $this->buildOpstartVejl($opstartGenbestil, $opstartGenbestilAvance);
+        $opstart = $this->toNullableFloat($normalized['opstart'] ?? null);
+        $opstartAvance = $this->toNullableFloat($normalized['opstart_avance'] ?? null);
+        $opstartVejl = $this->buildOpstartVejl($opstart, $opstartAvance);
         $netWeight = $this->toNullableInt($normalized['net_weight_grams'] ?? null);
         $grossWeight = $this->toNullableInt($normalized['gross_weight_grams'] ?? null);
         $taraWeight = $this->calculateTara($grossWeight, $netWeight);
@@ -452,9 +466,17 @@ final class ProductRepository
             'bestil_interval' => $bestilInterval,
             'bestil_interval_unit' => $bestilIntervalUnit,
             'min_ordre' => $minOrdre,
+            'produkt_maal' => $produktMaal,
             'leveringstid' => $leveringstid,
             'produktionstid' => $produktionstid,
             'levering_text' => $leveringText,
+            'opstart_pr' => $opstartPr,
+            'opstart_genbestil' => $opstartGenbestil,
+            'opstart_genbestil_avance' => $opstartGenbestilAvance,
+            'opstart_genbestil_vejl' => $opstartGenbestilVejl,
+            'opstart' => $opstart,
+            'opstart_avance' => $opstartAvance,
+            'opstart_vejl' => $opstartVejl,
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
@@ -489,9 +511,17 @@ final class ProductRepository
             'bestil_interval' => $bestilInterval,
             'bestil_interval_unit' => $bestilIntervalUnit,
             'min_ordre' => $minOrdre,
+            'produkt_maal' => $produktMaal,
             'leveringstid' => $leveringstid,
             'produktionstid' => $produktionstid,
             'levering_text' => $leveringText,
+            'opstart_pr' => $opstartPr,
+            'opstart_genbestil' => $opstartGenbestil,
+            'opstart_genbestil_avance' => $opstartGenbestilAvance,
+            'opstart_genbestil_vejl' => $opstartGenbestilVejl,
+            'opstart' => $opstart,
+            'opstart_avance' => $opstartAvance,
+            'opstart_vejl' => $opstartVejl,
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
@@ -536,9 +566,17 @@ final class ProductRepository
             'bestil_interval' => $this->toNullableInt($extra['bestil_interval'] ?? null),
             'bestil_interval_unit' => $this->toNullableString($extra['bestil_interval_unit'] ?? null),
             'min_ordre' => $this->toNullableInt($extra['min_ordre'] ?? null),
+            'produkt_maal' => $this->toNullableString($extra['produkt_maal'] ?? null),
             'leveringstid' => $this->toNullableInt($extra['leveringstid'] ?? null),
             'produktionstid' => $this->toNullableInt($extra['produktionstid'] ?? null),
             'levering_text' => $this->toNullableString($extra['levering_text'] ?? null),
+            'opstart_pr' => $this->toNullableString($extra['opstart_pr'] ?? null),
+            'opstart_genbestil' => $this->toNullableFloat($extra['opstart_genbestil'] ?? null),
+            'opstart_genbestil_avance' => $this->toNullableFloat($extra['opstart_genbestil_avance'] ?? null),
+            'opstart_genbestil_vejl' => $this->toNullableFloat($extra['opstart_genbestil_vejl'] ?? null),
+            'opstart' => $this->toNullableFloat($extra['opstart'] ?? null),
+            'opstart_avance' => $this->toNullableFloat($extra['opstart_avance'] ?? null),
+            'opstart_vejl' => $this->toNullableFloat($extra['opstart_vejl'] ?? null),
             'net_weight_grams' => $this->toNullableInt($extra['net_weight_grams'] ?? null),
             'gross_weight_grams' => $this->toNullableInt($extra['gross_weight_grams'] ?? null),
             'tara_weight_grams' => $this->toNullableInt($extra['tara_weight_grams'] ?? null),
@@ -580,9 +618,17 @@ final class ProductRepository
             'bestil_interval' => 'Bestil Interval',
             'bestil_interval_unit' => 'Bestil Interval enhed',
             'min_ordre' => 'Min. ordre',
+            'produkt_maal' => 'Produkt mål',
             'leveringstid' => 'Leveringstid',
             'produktionstid' => 'Produktionstid',
             'levering_text' => 'Levering',
+            'opstart_pr' => 'Opstart pr',
+            'opstart_genbestil' => 'Opstart Genbestil',
+            'opstart_genbestil_avance' => 'Opstart Genbestil avance',
+            'opstart_genbestil_vejl' => 'Opstart Genbestil Vejl',
+            'opstart' => 'Opstart',
+            'opstart_avance' => 'Opstart avance',
+            'opstart_vejl' => 'Opstart Vejl',
             'net_weight_grams' => 'Nettovægt',
             'gross_weight_grams' => 'Bruttovægt',
             'tara_weight_grams' => 'Tara Weight',
@@ -647,6 +693,20 @@ final class ProductRepository
         return (int) $string;
     }
 
+    private function toNullableFloat(mixed $value): ?float
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $string = str_replace([' ', ','], ['', '.'], trim((string) $value));
+        if ($string === '' || !is_numeric($string)) {
+            return null;
+        }
+
+        return (float) $string;
+    }
+
     private function calculateTara(?int $grossWeight, ?int $netWeight): ?int
     {
         if ($grossWeight === null || $netWeight === null) {
@@ -674,6 +734,17 @@ final class ProductRepository
         $sum = max(0, (int) ($leveringstid ?? 0)) + max(0, (int) ($produktionstid ?? 0));
 
         return $sum . ' hverdage efter godkendt korrektur';
+    }
+
+    private function buildOpstartVejl(?float $kost, ?float $avance): ?float
+    {
+        if ($kost === null && $avance === null) {
+            return null;
+        }
+
+        $sum = (float) ($kost ?? 0) + (float) ($avance ?? 0);
+
+        return round($sum, 2);
     }
 
     private function buildSigdetsoedtAssetUrl(?string $sku, string $folder, string $extension): ?string

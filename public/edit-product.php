@@ -184,6 +184,34 @@
                 <label for="price">Price</label>
                 <input id="price" name="price" type="text" />
 
+                <label for="produktMaal">Produkt mål</label>
+                <input id="produktMaal" name="produkt_maal" type="text" />
+
+                <label for="opstartPr">Opstart pr</label>
+                <select id="opstartPr" name="opstart_pr">
+                    <option value="">Select</option>
+                    <option value="Kg">Kg</option>
+                    <option value="Stk">Stk</option>
+                </select>
+
+                <label for="opstartGenbestil">Opstart Genbestil</label>
+                <input id="opstartGenbestil" name="opstart_genbestil" type="number" min="0" step="0.01" />
+
+                <label for="opstartGenbestilAvance">Opstart Genbestil avance (%)</label>
+                <input id="opstartGenbestilAvance" name="opstart_genbestil_avance" type="number" min="0" step="0.01" />
+
+                <label for="opstartGenbestilVejl">Opstart Genbestil Vejl (read only)</label>
+                <input id="opstartGenbestilVejl" name="opstart_genbestil_vejl" type="number" readonly />
+
+                <label for="opstart">Opstart</label>
+                <input id="opstart" name="opstart" type="number" min="0" step="0.01" />
+
+                <label for="opstartAvance">Opstart avance (%)</label>
+                <input id="opstartAvance" name="opstart_avance" type="number" min="0" step="0.01" />
+
+                <label for="opstartVejl">Opstart Vejl (read only)</label>
+                <input id="opstartVejl" name="opstart_vejl" type="number" readonly />
+
                 <div id="dynamicFields"></div>
 
                 <button type="submit">Save Changes</button>

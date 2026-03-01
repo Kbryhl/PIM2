@@ -11,6 +11,12 @@ const holdbarhedTextInput = document.getElementById('holdbarhedText');
 const leveringstidInput = document.getElementById('leveringstid');
 const produktionstidInput = document.getElementById('produktionstid');
 const leveringTextInput = document.getElementById('leveringText');
+const opstartGenbestilInput = document.getElementById('opstartGenbestil');
+const opstartGenbestilAvanceInput = document.getElementById('opstartGenbestilAvance');
+const opstartGenbestilVejlInput = document.getElementById('opstartGenbestilVejl');
+const opstartInput = document.getElementById('opstart');
+const opstartAvanceInput = document.getElementById('opstartAvance');
+const opstartVejlInput = document.getElementById('opstartVejl');
 const productPhotoUrlInput = document.getElementById('productPhotoUrl');
 const databladUrlInput = document.getElementById('databladUrl');
 const categorySelect = document.getElementById('categorySelect');
@@ -246,12 +252,38 @@ function updateSigdetsoedtAutoFields() {
   } else {
     leveringTextInput.value = '';
   }
+
+  const opstartGenbestil = Number(opstartGenbestilInput.value || 0);
+  const opstartGenbestilAvance = Number(opstartGenbestilAvanceInput.value || 0);
+  const hasOpstartGenbestil = String(opstartGenbestilInput.value || '').trim() !== '';
+  const hasOpstartGenbestilAvance = String(opstartGenbestilAvanceInput.value || '').trim() !== '';
+  if (hasOpstartGenbestil || hasOpstartGenbestilAvance) {
+    const sum = (Number.isFinite(opstartGenbestil) ? opstartGenbestil : 0) + (Number.isFinite(opstartGenbestilAvance) ? opstartGenbestilAvance : 0);
+    opstartGenbestilVejlInput.value = sum.toFixed(2);
+  } else {
+    opstartGenbestilVejlInput.value = '';
+  }
+
+  const opstart = Number(opstartInput.value || 0);
+  const opstartAvance = Number(opstartAvanceInput.value || 0);
+  const hasOpstart = String(opstartInput.value || '').trim() !== '';
+  const hasOpstartAvance = String(opstartAvanceInput.value || '').trim() !== '';
+  if (hasOpstart || hasOpstartAvance) {
+    const sum = (Number.isFinite(opstart) ? opstart : 0) + (Number.isFinite(opstartAvance) ? opstartAvance : 0);
+    opstartVejlInput.value = sum.toFixed(2);
+  } else {
+    opstartVejlInput.value = '';
+  }
 }
 
 skuInput.addEventListener('input', updateSigdetsoedtAutoFields);
 holdbarhedMonthsInput.addEventListener('input', updateSigdetsoedtAutoFields);
 leveringstidInput.addEventListener('input', updateSigdetsoedtAutoFields);
 produktionstidInput.addEventListener('input', updateSigdetsoedtAutoFields);
+opstartGenbestilInput.addEventListener('input', updateSigdetsoedtAutoFields);
+opstartGenbestilAvanceInput.addEventListener('input', updateSigdetsoedtAutoFields);
+opstartInput.addEventListener('input', updateSigdetsoedtAutoFields);
+opstartAvanceInput.addEventListener('input', updateSigdetsoedtAutoFields);
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -291,6 +323,12 @@ form.addEventListener('submit', async (event) => {
     description: formData.get('description') || '',
     category: getSelectedCategories(),
     price: formData.get('price') || '',
+    produkt_maal: formData.get('produkt_maal') || '',
+    opstart_pr: formData.get('opstart_pr') || '',
+    opstart_genbestil: formData.get('opstart_genbestil') || '',
+    opstart_genbestil_avance: formData.get('opstart_genbestil_avance') || '',
+    opstart: formData.get('opstart') || '',
+    opstart_avance: formData.get('opstart_avance') || '',
   };
 
   resultBox.textContent = 'Saving product...';
@@ -320,6 +358,8 @@ form.addEventListener('submit', async (event) => {
     taraWeightInput.value = String(result.data.tara_weight_grams ?? taraWeightInput.value);
     holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? holdbarhedTextInput.value);
     leveringTextInput.value = String(result.data.levering_text ?? leveringTextInput.value);
+    opstartGenbestilVejlInput.value = String(result.data.opstart_genbestil_vejl ?? opstartGenbestilVejlInput.value);
+    opstartVejlInput.value = String(result.data.opstart_vejl ?? opstartVejlInput.value);
     productPhotoUrlInput.value = String(result.data.product_photo_url ?? productPhotoUrlInput.value);
     databladUrlInput.value = String(result.data.datablad_url ?? databladUrlInput.value);
 
@@ -345,6 +385,8 @@ form.addEventListener('submit', async (event) => {
     taraWeightInput.value = String(result.data.tara_weight_grams ?? '');
     holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? '');
     leveringTextInput.value = String(result.data.levering_text ?? '');
+    opstartGenbestilVejlInput.value = String(result.data.opstart_genbestil_vejl ?? '');
+    opstartVejlInput.value = String(result.data.opstart_vejl ?? '');
     productPhotoUrlInput.value = String(result.data.product_photo_url ?? '');
     databladUrlInput.value = String(result.data.datablad_url ?? '');
   } catch (error) {

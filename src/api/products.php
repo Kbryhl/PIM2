@@ -75,6 +75,12 @@ try {
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
+                'produkt_maal' => trim((string) ($payload['produkt_maal'] ?? $_POST['produkt_maal'] ?? '')),
+                'opstart_pr' => trim((string) ($payload['opstart_pr'] ?? $_POST['opstart_pr'] ?? '')),
+                'opstart_genbestil' => trim((string) ($payload['opstart_genbestil'] ?? $_POST['opstart_genbestil'] ?? '')),
+                'opstart_genbestil_avance' => trim((string) ($payload['opstart_genbestil_avance'] ?? $_POST['opstart_genbestil_avance'] ?? '')),
+                'opstart' => trim((string) ($payload['opstart'] ?? $_POST['opstart'] ?? '')),
+                'opstart_avance' => trim((string) ($payload['opstart_avance'] ?? $_POST['opstart_avance'] ?? '')),
             ];
 
             if (($row['product_name'] ?? '') === '') {
@@ -101,6 +107,8 @@ try {
                     'tara_weight_grams' => $savedExtraData['tara_weight_grams'] ?? null,
                     'holdbarhed_text' => $savedExtraData['holdbarhed_text'] ?? null,
                     'levering_text' => $savedExtraData['levering_text'] ?? null,
+                    'opstart_genbestil_vejl' => $savedExtraData['opstart_genbestil_vejl'] ?? null,
+                    'opstart_vejl' => $savedExtraData['opstart_vejl'] ?? null,
                     'product_photo_url' => $savedExtraData['product_photo_url'] ?? null,
                     'datablad_url' => $savedExtraData['datablad_url'] ?? null,
                     'smagsvarianter' => $savedExtraData['smagsvarianter'] ?? [],
@@ -153,6 +161,12 @@ try {
                 'description' => trim((string) ($payload['description'] ?? $_POST['description'] ?? '')),
                 'category' => $payload['category'] ?? $_POST['category'] ?? '',
                 'price' => trim((string) ($payload['price'] ?? $_POST['price'] ?? '')),
+                'produkt_maal' => trim((string) ($payload['produkt_maal'] ?? $_POST['produkt_maal'] ?? '')),
+                'opstart_pr' => trim((string) ($payload['opstart_pr'] ?? $_POST['opstart_pr'] ?? '')),
+                'opstart_genbestil' => trim((string) ($payload['opstart_genbestil'] ?? $_POST['opstart_genbestil'] ?? '')),
+                'opstart_genbestil_avance' => trim((string) ($payload['opstart_genbestil_avance'] ?? $_POST['opstart_genbestil_avance'] ?? '')),
+                'opstart' => trim((string) ($payload['opstart'] ?? $_POST['opstart'] ?? '')),
+                'opstart_avance' => trim((string) ($payload['opstart_avance'] ?? $_POST['opstart_avance'] ?? '')),
             ];
 
             if (($row['product_name'] ?? '') === '') {
@@ -180,6 +194,8 @@ try {
                     'tara_weight_grams' => $updatedExtraData['tara_weight_grams'] ?? null,
                     'holdbarhed_text' => $updatedExtraData['holdbarhed_text'] ?? null,
                     'levering_text' => $updatedExtraData['levering_text'] ?? null,
+                    'opstart_genbestil_vejl' => $updatedExtraData['opstart_genbestil_vejl'] ?? null,
+                    'opstart_vejl' => $updatedExtraData['opstart_vejl'] ?? null,
                     'product_photo_url' => $updatedExtraData['product_photo_url'] ?? null,
                     'datablad_url' => $updatedExtraData['datablad_url'] ?? null,
                     'smagsvarianter' => $updatedExtraData['smagsvarianter'] ?? [],

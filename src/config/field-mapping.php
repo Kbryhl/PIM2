@@ -19,6 +19,9 @@ return [
         'price' => [
             'price', 'pris', 'salgspris', 'udsalgspris', 'nettopris', 'bruttopris', 'price_dkk',
         ],
+        'produkt_maal' => [
+            'produkt_maal', 'produkt mål', 'produktmaal', 'product_dimensions_text',
+        ],
         'currency' => [
             'currency', 'valuta',
         ],
@@ -76,6 +79,21 @@ return [
         'produktionstid' => [
             'produktionstid', 'produktion_tid', 'production_time',
         ],
+        'opstart_pr' => [
+            'opstart_pr', 'opstart pr',
+        ],
+        'opstart_genbestil' => [
+            'opstart_genbestil', 'opstart genbestil', 'opstart_genbestil_kost',
+        ],
+        'opstart_genbestil_avance' => [
+            'opstart_genbestil_avance', 'opstart genbestil avance',
+        ],
+        'opstart' => [
+            'opstart', 'opstart_kost',
+        ],
+        'opstart_avance' => [
+            'opstart_avance', 'opstart avance',
+        ],
         'net_weight_grams' => [
             'net_weight_grams', 'nettovaegt', 'nettovægt', 'netto_weight', 'netto_vaegt', 'net_weight',
         ],
@@ -128,6 +146,7 @@ return [
             'description' => ['sigdetsoedt_beskrivelse', 'beskrivelse', 'produktbeskrivelse'],
             'category' => ['sigdetsoedt_kategori', 'kategori', 'produktgruppe', 'serie'],
             'price' => ['sigdetsoedt_pris', 'pris', 'salgspris', 'udsalgspris'],
+            'produkt_maal' => ['sigdetsoedt_produkt_maal', 'produkt_maal', 'produkt mål'],
             'currency' => ['valuta', 'currency'],
             'weight' => ['sigdetsoedt_vaegt', 'vaegt', 'nettovaegt'],
             'dimensions' => ['sigdetsoedt_dimensioner', 'dimensioner', 'maal', 'stoerrelse'],
@@ -147,6 +166,11 @@ return [
             'min_ordre' => ['sigdetsoedt_min_ordre', 'min_ordre', 'min ordre'],
             'leveringstid' => ['sigdetsoedt_leveringstid', 'leveringstid', 'levering tid'],
             'produktionstid' => ['sigdetsoedt_produktionstid', 'produktionstid', 'produktion tid'],
+            'opstart_pr' => ['sigdetsoedt_opstart_pr', 'opstart_pr', 'opstart pr'],
+            'opstart_genbestil' => ['sigdetsoedt_opstart_genbestil', 'opstart_genbestil', 'opstart genbestil'],
+            'opstart_genbestil_avance' => ['sigdetsoedt_opstart_genbestil_avance', 'opstart_genbestil_avance', 'opstart genbestil avance'],
+            'opstart' => ['sigdetsoedt_opstart', 'opstart'],
+            'opstart_avance' => ['sigdetsoedt_opstart_avance', 'opstart_avance', 'opstart avance'],
             'net_weight_grams' => ['sigdetsoedt_nettovaegt', 'nettovaegt', 'net_weight_grams'],
             'gross_weight_grams' => ['sigdetsoedt_bruttovaegt', 'bruttovaegt', 'gross_weight_grams'],
             'holdbarhed_months' => ['sigdetsoedt_holdbarhed', 'holdbarhed_months', 'holdbarhed'],
