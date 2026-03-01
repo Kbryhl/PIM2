@@ -203,6 +203,38 @@ th {
     align-items: center;
 }
 
+.field-group {
+    border: 1px solid var(--line);
+    border-radius: 0.7rem;
+    padding: 0.8rem;
+    display: grid;
+    gap: 0.6rem;
+    background: #fff;
+}
+
+.field-group-title {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.group-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+}
+
+.group-field {
+    display: grid;
+    gap: 0.35rem;
+}
+
+@media (max-width: 860px) {
+    .group-grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
 .result-box {
     margin-top: 1rem;
     background: #0f172a;

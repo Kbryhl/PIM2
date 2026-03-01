@@ -194,14 +194,23 @@
                     <option value="Stk">Stk</option>
                 </select>
 
-                <label for="opstartGenbestil">Opstart Genbestil</label>
-                <input id="opstartGenbestil" name="opstart_genbestil" type="number" min="0" step="0.01" />
-
-                <label for="opstartGenbestilAvance">Opstart Genbestil avance (%)</label>
-                <input id="opstartGenbestilAvance" name="opstart_genbestil_avance" type="number" min="0" step="0.01" />
-
-                <label for="opstartGenbestilVejl">Opstart Genbestil Vejl (read only)</label>
-                <input id="opstartGenbestilVejl" name="opstart_genbestil_vejl" type="number" readonly />
+                <section class="field-group" aria-labelledby="genbestil-group-title">
+                    <h3 id="genbestil-group-title" class="field-group-title">Genbestilling</h3>
+                    <div class="group-grid-3">
+                        <div class="group-field">
+                            <label for="opstartGenbestil">Opstart Genbestil</label>
+                            <input id="opstartGenbestil" name="opstart_genbestil" type="number" min="0" step="0.01" />
+                        </div>
+                        <div class="group-field">
+                            <label for="opstartGenbestilAvance">Opstart Genbestil avance (%)</label>
+                            <input id="opstartGenbestilAvance" name="opstart_genbestil_avance" type="number" min="0" step="0.01" />
+                        </div>
+                        <div class="group-field">
+                            <label for="opstartGenbestilVejl">Opstart Genbestil Vejl (read only)</label>
+                            <input id="opstartGenbestilVejl" name="opstart_genbestil_vejl" type="number" readonly />
+                        </div>
+                    </div>
+                </section>
 
                 <label for="opstart">Opstart</label>
                 <input id="opstart" name="opstart" type="number" min="0" step="0.01" />
