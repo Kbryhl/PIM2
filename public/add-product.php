@@ -209,14 +209,23 @@
                     </div>
                 </section>
 
-                <label for="opstart">Opstart</label>
-                <input id="opstart" name="opstart" type="number" min="0" step="0.01" placeholder="0" />
-
-                <label for="opstartAvance">Opstart avance (%)</label>
-                <input id="opstartAvance" name="opstart_avance" type="number" min="0" step="0.01" placeholder="0" />
-
-                <label for="opstartVejl">Opstart Vejl (read only)</label>
-                <input id="opstartVejl" name="opstart_vejl" type="number" readonly placeholder="Auto calculated" />
+                <section class="field-group" aria-labelledby="opstart-group-title">
+                    <h3 id="opstart-group-title" class="field-group-title">Opstart</h3>
+                    <div class="group-grid-3">
+                        <div class="group-field">
+                            <label for="opstart">Opstart</label>
+                            <input id="opstart" name="opstart" type="number" min="0" step="0.01" placeholder="0" />
+                        </div>
+                        <div class="group-field">
+                            <label for="opstartAvance">Opstart avance (%)</label>
+                            <input id="opstartAvance" name="opstart_avance" type="number" min="0" step="0.01" placeholder="0" />
+                        </div>
+                        <div class="group-field">
+                            <label for="opstartVejl">Opstart Vejl (read only)</label>
+                            <input id="opstartVejl" name="opstart_vejl" type="number" readonly placeholder="Auto calculated" />
+                        </div>
+                    </div>
+                </section>
 
                 <button type="submit">Save Product</button>
             </form>

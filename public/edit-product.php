@@ -212,14 +212,23 @@
                     </div>
                 </section>
 
-                <label for="opstart">Opstart</label>
-                <input id="opstart" name="opstart" type="number" min="0" step="0.01" />
-
-                <label for="opstartAvance">Opstart avance (%)</label>
-                <input id="opstartAvance" name="opstart_avance" type="number" min="0" step="0.01" />
-
-                <label for="opstartVejl">Opstart Vejl (read only)</label>
-                <input id="opstartVejl" name="opstart_vejl" type="number" readonly />
+                <section class="field-group" aria-labelledby="opstart-group-title">
+                    <h3 id="opstart-group-title" class="field-group-title">Opstart</h3>
+                    <div class="group-grid-3">
+                        <div class="group-field">
+                            <label for="opstart">Opstart</label>
+                            <input id="opstart" name="opstart" type="number" min="0" step="0.01" />
+                        </div>
+                        <div class="group-field">
+                            <label for="opstartAvance">Opstart avance (%)</label>
+                            <input id="opstartAvance" name="opstart_avance" type="number" min="0" step="0.01" />
+                        </div>
+                        <div class="group-field">
+                            <label for="opstartVejl">Opstart Vejl (read only)</label>
+                            <input id="opstartVejl" name="opstart_vejl" type="number" readonly />
+                        </div>
+                    </div>
+                </section>
 
                 <div id="dynamicFields"></div>
 
