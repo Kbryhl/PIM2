@@ -742,7 +742,9 @@ final class ProductRepository
             return null;
         }
 
-        $sum = (float) ($kost ?? 0) + (float) ($avance ?? 0);
+        $baseKost = (float) ($kost ?? 0);
+        $avancePct = (float) ($avance ?? 0);
+        $sum = $baseKost + ($baseKost * ($avancePct / 100));
 
         return round($sum, 2);
     }

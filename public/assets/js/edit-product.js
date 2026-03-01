@@ -331,7 +331,9 @@ function updateCalculatedReadOnlyFields() {
   const hasOpstartGenbestil = String(opstartGenbestilInput.value || '').trim() !== '';
   const hasOpstartGenbestilAvance = String(opstartGenbestilAvanceInput.value || '').trim() !== '';
   if (hasOpstartGenbestil || hasOpstartGenbestilAvance) {
-    const sum = (Number.isFinite(opstartGenbestil) ? opstartGenbestil : 0) + (Number.isFinite(opstartGenbestilAvance) ? opstartGenbestilAvance : 0);
+    const kost = Number.isFinite(opstartGenbestil) ? opstartGenbestil : 0;
+    const avancePct = Number.isFinite(opstartGenbestilAvance) ? opstartGenbestilAvance : 0;
+    const sum = kost + (kost * (avancePct / 100));
     opstartGenbestilVejlInput.value = sum.toFixed(2);
   } else {
     opstartGenbestilVejlInput.value = '';
@@ -342,7 +344,9 @@ function updateCalculatedReadOnlyFields() {
   const hasOpstart = String(opstartInput.value || '').trim() !== '';
   const hasOpstartAvance = String(opstartAvanceInput.value || '').trim() !== '';
   if (hasOpstart || hasOpstartAvance) {
-    const sum = (Number.isFinite(opstart) ? opstart : 0) + (Number.isFinite(opstartAvance) ? opstartAvance : 0);
+    const kost = Number.isFinite(opstart) ? opstart : 0;
+    const avancePct = Number.isFinite(opstartAvance) ? opstartAvance : 0;
+    const sum = kost + (kost * (avancePct / 100));
     opstartVejlInput.value = sum.toFixed(2);
   } else {
     opstartVejlInput.value = '';
