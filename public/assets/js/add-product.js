@@ -25,6 +25,9 @@ const addFolieVariantBtn = document.getElementById('addFolieVariantBtn');
 const finishSelect = document.getElementById('finishSelect');
 const newFinishInput = document.getElementById('newFinishInput');
 const addFinishBtn = document.getElementById('addFinishBtn');
+const bestilIntervalUnitSelect = document.getElementById('bestilIntervalUnitSelect');
+const newBestilIntervalUnitInput = document.getElementById('newBestilIntervalUnitInput');
+const addBestilIntervalUnitBtn = document.getElementById('addBestilIntervalUnitBtn');
 const changeLogInput = document.getElementById('changeLog');
 
 function getSelectedCategories() {
@@ -138,7 +141,7 @@ function ensureOption(selectElement, value, selected = false) {
   selectElement.appendChild(option);
 }
 
-async function loadReusableList(groupKey, selectElement) {
+async function loadReusableList(groupKey, selectElement, includeEmptyOption = false) {
   try {
     const response = await fetch(`${optionsApiUrl}?group=${encodeURIComponent(groupKey)}`);
     const payload = await response.json();
@@ -148,6 +151,12 @@ async function loadReusableList(groupKey, selectElement) {
 
     const options = Array.isArray(payload.data.values) ? payload.data.values : [];
     selectElement.innerHTML = '';
+    if (includeEmptyOption) {
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = 'Select unit';
+      selectElement.appendChild(empty);
+    }
     for (const option of options) {
       ensureOption(selectElement, option, false);
     }
@@ -171,6 +180,12 @@ addFinishBtn.addEventListener('click', () => {
   const value = String(newFinishInput.value || '').trim();
   if (!value) return;
   callOptionsApiAdd('finish', value, finishSelect, newFinishInput);
+});
+
+addBestilIntervalUnitBtn.addEventListener('click', () => {
+  const value = String(newBestilIntervalUnitInput.value || '').trim();
+  if (!value) return;
+  callOptionsApiAdd('bestil_interval_unit', value, bestilIntervalUnitSelect, newBestilIntervalUnitInput);
 });
 
 async function callOptionsApiAdd(group, value, selectElement, inputElement) {
@@ -236,6 +251,13 @@ form.addEventListener('submit', async (event) => {
     hostedshop_id: formData.get('hostedshop_id') || '',
     supplier: formData.get('supplier') || '',
     brand: formData.get('brand') || '',
+    stk_pr_kolli: formData.get('stk_pr_kolli') || '',
+    stk_1_4_pl: formData.get('stk_1_4_pl') || '',
+    stk_1_2_pl: formData.get('stk_1_2_pl') || '',
+    stk_1_1_pl: formData.get('stk_1_1_pl') || '',
+    inkl_fragt: document.getElementById('inklFragt').checked,
+    bestil_interval: formData.get('bestil_interval') || '',
+    bestil_interval_unit: formData.get('bestil_interval_unit') || '',
     net_weight_grams: formData.get('net_weight_grams') || '',
     gross_weight_grams: formData.get('gross_weight_grams') || '',
     holdbarhed_months: formData.get('holdbarhed_months') || '',
@@ -298,6 +320,7 @@ form.addEventListener('submit', async (event) => {
     for (const option of finishSelect.options) {
       option.selected = false;
     }
+    bestilIntervalUnitSelect.value = '';
     changeLogInput.value = String(result.data.change_log || 'Saved.');
     taraWeightInput.value = String(result.data.tara_weight_grams ?? '');
     holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? '');
@@ -317,3 +340,4 @@ loadSmagsvarianterOptions();
 loadReusableList('form_varianter', formVarianterSelect);
 loadReusableList('folie_varianter', folieVarianterSelect);
 loadReusableList('finish', finishSelect);
+loadReusableList('bestil_interval_unit', bestilIntervalUnitSelect, true);

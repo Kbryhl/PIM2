@@ -123,6 +123,11 @@ final class ProductRepository
         return $this->getDistinctExtraDataList('finish');
     }
 
+    public function getDistinctBestilIntervalUnits(): array
+    {
+        return $this->getDistinctExtraDataList('bestil_interval_unit');
+    }
+
     public function getProductById(int $id): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM products WHERE id = :id LIMIT 1');
@@ -347,6 +352,13 @@ final class ProductRepository
             'hostedshop_id' => $this->pickMappedValue($map, $aliases, 'hostedshop_id'),
             'supplier' => $this->pickMappedValue($map, $aliases, 'supplier'),
             'brand' => $this->pickMappedValue($map, $aliases, 'brand'),
+            'stk_pr_kolli' => $this->pickMappedValue($map, $aliases, 'stk_pr_kolli'),
+            'stk_1_4_pl' => $this->pickMappedValue($map, $aliases, 'stk_1_4_pl'),
+            'stk_1_2_pl' => $this->pickMappedValue($map, $aliases, 'stk_1_2_pl'),
+            'stk_1_1_pl' => $this->pickMappedValue($map, $aliases, 'stk_1_1_pl'),
+            'inkl_fragt' => $this->pickMappedValue($map, $aliases, 'inkl_fragt'),
+            'bestil_interval' => $this->pickMappedValue($map, $aliases, 'bestil_interval'),
+            'bestil_interval_unit' => $this->pickMappedValue($map, $aliases, 'bestil_interval_unit'),
             'net_weight_grams' => $this->pickMappedValue($map, $aliases, 'net_weight_grams'),
             'gross_weight_grams' => $this->pickMappedValue($map, $aliases, 'gross_weight_grams'),
             'holdbarhed_months' => $this->pickMappedValue($map, $aliases, 'holdbarhed_months'),
@@ -392,6 +404,13 @@ final class ProductRepository
         $hostedshopId = $this->toNullableString($normalized['hostedshop_id'] ?? null);
         $supplier = $this->toNullableString($normalized['supplier'] ?? null);
         $brand = $this->toNullableString($normalized['brand'] ?? null);
+        $stkPrKolli = $this->toNullableInt($normalized['stk_pr_kolli'] ?? null);
+        $stkQuarterPl = $this->toNullableInt($normalized['stk_1_4_pl'] ?? null);
+        $stkHalfPl = $this->toNullableInt($normalized['stk_1_2_pl'] ?? null);
+        $stkFullPl = $this->toNullableInt($normalized['stk_1_1_pl'] ?? null);
+        $inklFragt = $this->toBooleanFlag($normalized['inkl_fragt'] ?? null);
+        $bestilInterval = $this->toNullableInt($normalized['bestil_interval'] ?? null);
+        $bestilIntervalUnit = $this->toNullableString($normalized['bestil_interval_unit'] ?? null);
         $netWeight = $this->toNullableInt($normalized['net_weight_grams'] ?? null);
         $grossWeight = $this->toNullableInt($normalized['gross_weight_grams'] ?? null);
         $taraWeight = $this->calculateTara($grossWeight, $netWeight);
@@ -418,6 +437,13 @@ final class ProductRepository
             'hostedshop_id' => $hostedshopId,
             'supplier' => $supplier,
             'brand' => $brand,
+            'stk_pr_kolli' => $stkPrKolli,
+            'stk_1_4_pl' => $stkQuarterPl,
+            'stk_1_2_pl' => $stkHalfPl,
+            'stk_1_1_pl' => $stkFullPl,
+            'inkl_fragt' => $inklFragt,
+            'bestil_interval' => $bestilInterval,
+            'bestil_interval_unit' => $bestilIntervalUnit,
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
@@ -444,6 +470,13 @@ final class ProductRepository
             'hostedshop_id' => $hostedshopId,
             'supplier' => $supplier,
             'brand' => $brand,
+            'stk_pr_kolli' => $stkPrKolli,
+            'stk_1_4_pl' => $stkQuarterPl,
+            'stk_1_2_pl' => $stkHalfPl,
+            'stk_1_1_pl' => $stkFullPl,
+            'inkl_fragt' => $inklFragt,
+            'bestil_interval' => $bestilInterval,
+            'bestil_interval_unit' => $bestilIntervalUnit,
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
@@ -480,6 +513,13 @@ final class ProductRepository
             'hostedshop_id' => $this->toNullableString($extra['hostedshop_id'] ?? null),
             'supplier' => $this->toNullableString($extra['supplier'] ?? null),
             'brand' => $this->toNullableString($extra['brand'] ?? null),
+            'stk_pr_kolli' => $this->toNullableInt($extra['stk_pr_kolli'] ?? null),
+            'stk_1_4_pl' => $this->toNullableInt($extra['stk_1_4_pl'] ?? null),
+            'stk_1_2_pl' => $this->toNullableInt($extra['stk_1_2_pl'] ?? null),
+            'stk_1_1_pl' => $this->toNullableInt($extra['stk_1_1_pl'] ?? null),
+            'inkl_fragt' => $this->toNullableInt($extra['inkl_fragt'] ?? null),
+            'bestil_interval' => $this->toNullableInt($extra['bestil_interval'] ?? null),
+            'bestil_interval_unit' => $this->toNullableString($extra['bestil_interval_unit'] ?? null),
             'net_weight_grams' => $this->toNullableInt($extra['net_weight_grams'] ?? null),
             'gross_weight_grams' => $this->toNullableInt($extra['gross_weight_grams'] ?? null),
             'tara_weight_grams' => $this->toNullableInt($extra['tara_weight_grams'] ?? null),
@@ -513,6 +553,13 @@ final class ProductRepository
             'hostedshop_id' => 'HostedShop ID',
             'supplier' => 'Supplier',
             'brand' => 'Brand',
+            'stk_pr_kolli' => 'Stk pr Kolli',
+            'stk_1_4_pl' => 'Stk 1/4 pl',
+            'stk_1_2_pl' => 'Stk 1/2 pl',
+            'stk_1_1_pl' => 'Stk 1/1 pl',
+            'inkl_fragt' => 'Inkl. Fragt',
+            'bestil_interval' => 'Bestil Interval',
+            'bestil_interval_unit' => 'Bestil Interval enhed',
             'net_weight_grams' => 'Nettovægt',
             'gross_weight_grams' => 'Bruttovægt',
             'tara_weight_grams' => 'Tara Weight',

@@ -30,6 +30,7 @@ try {
                     'form_varianter' => $productRepository->getDistinctFormVarianter(),
                     'folie_varianter' => $productRepository->getDistinctFolieVarianter(),
                     'finish' => $productRepository->getDistinctFinishOptions(),
+                    'bestil_interval_unit' => $productRepository->getDistinctBestilIntervalUnits(),
                     default => [],
                 };
 

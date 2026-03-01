@@ -7,6 +7,7 @@ const groups = [
   { key: 'form_varianter', label: 'Form varianter' },
   { key: 'folie_varianter', label: 'Folie varianter' },
   { key: 'finish', label: 'Finish' },
+  { key: 'bestil_interval_unit', label: 'Bestil Interval enhed' },
 ];
 
 function escapeHtml(value) {

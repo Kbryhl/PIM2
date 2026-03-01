@@ -46,6 +46,27 @@ return [
         'brand' => [
             'brand', 'maerke', 'mærke',
         ],
+        'stk_pr_kolli' => [
+            'stk_pr_kolli', 'stk pr kolli', 'stk_pr_kasse', 'stk pr kasse',
+        ],
+        'stk_1_4_pl' => [
+            'stk_1_4_pl', 'stk 1/4 pl', 'stk_1_4_palle',
+        ],
+        'stk_1_2_pl' => [
+            'stk_1_2_pl', 'stk 1/2 pl', 'stk_1_2_palle',
+        ],
+        'stk_1_1_pl' => [
+            'stk_1_1_pl', 'stk 1/1 pl', 'stk_1_1_palle',
+        ],
+        'inkl_fragt' => [
+            'inkl_fragt', 'inkl fragt', 'inklusive_fragt',
+        ],
+        'bestil_interval' => [
+            'bestil_interval', 'bestil interval', 'order_interval',
+        ],
+        'bestil_interval_unit' => [
+            'bestil_interval_unit', 'bestil interval enhed', 'order_interval_unit',
+        ],
         'net_weight_grams' => [
             'net_weight_grams', 'nettovaegt', 'nettovægt', 'netto_weight', 'netto_vaegt', 'net_weight',
         ],
@@ -107,6 +128,13 @@ return [
             'hostedshop_id' => ['sigdetsoedt_hostedshop_id', 'hostedshop_id', 'shop_id'],
             'supplier' => ['sigdetsoedt_supplier', 'leverandor', 'supplier'],
             'brand' => ['sigdetsoedt_brand', 'maerke', 'brand'],
+            'stk_pr_kolli' => ['sigdetsoedt_stk_pr_kolli', 'stk_pr_kolli', 'stk  pr kolli'],
+            'stk_1_4_pl' => ['sigdetsoedt_stk_1_4_pl', 'stk_1_4_pl', 'stk 1/4 pl'],
+            'stk_1_2_pl' => ['sigdetsoedt_stk_1_2_pl', 'stk_1_2_pl', 'stk 1/2 pl'],
+            'stk_1_1_pl' => ['sigdetsoedt_stk_1_1_pl', 'stk_1_1_pl', 'stk 1/1 pl'],
+            'inkl_fragt' => ['sigdetsoedt_inkl_fragt', 'inkl_fragt', 'inkl fragt'],
+            'bestil_interval' => ['sigdetsoedt_bestil_interval', 'bestil_interval', 'bestil interval'],
+            'bestil_interval_unit' => ['sigdetsoedt_bestil_interval_unit', 'bestil_interval_unit', 'bestil interval enhed'],
             'net_weight_grams' => ['sigdetsoedt_nettovaegt', 'nettovaegt', 'net_weight_grams'],
             'gross_weight_grams' => ['sigdetsoedt_bruttovaegt', 'bruttovaegt', 'gross_weight_grams'],
             'holdbarhed_months' => ['sigdetsoedt_holdbarhed', 'holdbarhed_months', 'holdbarhed'],

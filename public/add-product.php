@@ -58,6 +58,35 @@
                 <label for="brand">Brand</label>
                 <input id="brand" name="brand" type="text" placeholder="Brand" />
 
+                <label for="stkPrKolli">Stk pr Kolli</label>
+                <input id="stkPrKolli" name="stk_pr_kolli" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="stkQuarterPl">Stk 1/4 pl</label>
+                <input id="stkQuarterPl" name="stk_1_4_pl" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="stkHalfPl">Stk 1/2 pl</label>
+                <input id="stkHalfPl" name="stk_1_2_pl" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="stkFullPl">Stk 1/1 pl</label>
+                <input id="stkFullPl" name="stk_1_1_pl" type="number" min="0" step="1" placeholder="0" />
+
+                <label class="checkbox-field" for="inklFragt">
+                    <input id="inklFragt" name="inkl_fragt" type="checkbox" />
+                    <span>Inkl. Fragt</span>
+                </label>
+
+                <label for="bestilInterval">Bestil Interval</label>
+                <input id="bestilInterval" name="bestil_interval" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="bestilIntervalUnitSelect">Bestil Interval enhed</label>
+                <select id="bestilIntervalUnitSelect" name="bestil_interval_unit">
+                    <option value="">Select unit</option>
+                </select>
+                <div class="inline-row">
+                    <input id="newBestilIntervalUnitInput" type="text" placeholder="Add new interval unit" />
+                    <button id="addBestilIntervalUnitBtn" type="button">Add Unit</button>
+                </div>
+
                 <label for="netWeightGrams">Nettovægt (grams)</label>
                 <input id="netWeightGrams" name="net_weight_grams" type="number" min="0" step="1" placeholder="0" />
 

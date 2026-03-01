@@ -9,6 +9,7 @@ final class OptionRepository
         'form_varianter',
         'folie_varianter',
         'finish',
+        'bestil_interval_unit',
     ];
 
     public function __construct(private PDO $pdo)

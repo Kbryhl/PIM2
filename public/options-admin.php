@@ -22,7 +22,7 @@
     <main class="container layout">
         <section class="card">
             <h2>Variant Options Admin</h2>
-            <p class="hint">Manage reusable options for Smagsvarianter, Form varianter, Folie varianter and Finish.</p>
+            <p class="hint">Manage reusable options for Smagsvarianter, Form varianter, Folie varianter, Finish and Bestil Interval enhed.</p>
             <div id="optionsAdminRoot"></div>
             <pre id="optionsAdminResult" class="result-box">Loading options...</pre>
         </section>

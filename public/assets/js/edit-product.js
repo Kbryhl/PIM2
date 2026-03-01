@@ -19,6 +19,9 @@ const addFolieVariantBtn = document.getElementById('addFolieVariantBtn');
 const finishSelect = document.getElementById('finishSelect');
 const newFinishInput = document.getElementById('newFinishInput');
 const addFinishBtn = document.getElementById('addFinishBtn');
+const bestilIntervalUnitSelect = document.getElementById('bestilIntervalUnitSelect');
+const newBestilIntervalUnitInput = document.getElementById('newBestilIntervalUnitInput');
+const addBestilIntervalUnitBtn = document.getElementById('addBestilIntervalUnitBtn');
 
 const readOnlyExtraFields = new Set([
   'change_log',
@@ -35,6 +38,13 @@ const knownFields = new Set([
   'hostedshop_id',
   'supplier',
   'brand',
+  'stk_pr_kolli',
+  'stk_1_4_pl',
+  'stk_1_2_pl',
+  'stk_1_1_pl',
+  'inkl_fragt',
+  'bestil_interval',
+  'bestil_interval_unit',
   'net_weight_grams',
   'gross_weight_grams',
   'holdbarhed_months',
@@ -202,7 +212,7 @@ function ensureOption(selectElement, value, selected = false) {
   selectElement.appendChild(option);
 }
 
-async function loadReusableList(groupKey, selectElement, initialSelected = []) {
+async function loadReusableList(groupKey, selectElement, initialSelected = [], includeEmptyOption = false) {
   try {
     const response = await fetch(`${optionsApiUrl}?group=${encodeURIComponent(groupKey)}`);
     const payload = await response.json();
@@ -212,6 +222,12 @@ async function loadReusableList(groupKey, selectElement, initialSelected = []) {
 
     const options = Array.isArray(payload.data.values) ? payload.data.values : [];
     selectElement.innerHTML = '';
+    if (includeEmptyOption) {
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = 'Select unit';
+      selectElement.appendChild(empty);
+    }
     for (const option of options) {
       ensureOption(selectElement, option, false);
     }
@@ -238,6 +254,12 @@ addFinishBtn.addEventListener('click', () => {
   const value = String(newFinishInput.value || '').trim();
   if (!value) return;
   callOptionsApiAdd('finish', value, finishSelect, newFinishInput);
+});
+
+addBestilIntervalUnitBtn.addEventListener('click', () => {
+  const value = String(newBestilIntervalUnitInput.value || '').trim();
+  if (!value) return;
+  callOptionsApiAdd('bestil_interval_unit', value, bestilIntervalUnitSelect, newBestilIntervalUnitInput);
 });
 
 async function callOptionsApiAdd(group, value, selectElement, inputElement) {
@@ -332,12 +354,19 @@ function applyProductToForm(product) {
   const selectedFormVarianter = parseList(extra.form_varianter || []);
   const selectedFolieVarianter = parseList(extra.folie_varianter || []);
   const selectedFinish = parseList(extra.finish || []);
+  const selectedBestilIntervalUnit = String(extra.bestil_interval_unit ?? '');
 
   document.getElementById('active').checked = toBoolean(extra.active ?? false);
   document.getElementById('barcode').value = String(extra.barcode ?? '');
   document.getElementById('hostedshopId').value = String(extra.hostedshop_id ?? '');
   document.getElementById('supplier').value = String(extra.supplier ?? '');
   document.getElementById('brand').value = String(extra.brand ?? '');
+  document.getElementById('stkPrKolli').value = String(extra.stk_pr_kolli ?? '');
+  document.getElementById('stkQuarterPl').value = String(extra.stk_1_4_pl ?? '');
+  document.getElementById('stkHalfPl').value = String(extra.stk_1_2_pl ?? '');
+  document.getElementById('stkFullPl').value = String(extra.stk_1_1_pl ?? '');
+  document.getElementById('inklFragt').checked = toBoolean(extra.inkl_fragt ?? false);
+  document.getElementById('bestilInterval').value = String(extra.bestil_interval ?? '');
   document.getElementById('netWeightGrams').value = String(extra.net_weight_grams ?? '');
   document.getElementById('grossWeightGrams').value = String(extra.gross_weight_grams ?? '');
   document.getElementById('holdbarhedMonths').value = String(extra.holdbarhed_months ?? '');
@@ -350,6 +379,7 @@ function applyProductToForm(product) {
   loadReusableList('form_varianter', formVarianterSelect, selectedFormVarianter);
   loadReusableList('folie_varianter', folieVarianterSelect, selectedFolieVarianter);
   loadReusableList('finish', finishSelect, selectedFinish);
+  loadReusableList('bestil_interval_unit', bestilIntervalUnitSelect, selectedBestilIntervalUnit ? [selectedBestilIntervalUnit] : [], true);
 
   dynamicFieldsContainer.innerHTML = '';
   for (const [key, value] of Object.entries(extra)) {
@@ -409,6 +439,13 @@ form.addEventListener('submit', async (event) => {
     hostedshop_id: formData.get('hostedshop_id') || '',
     supplier: formData.get('supplier') || '',
     brand: formData.get('brand') || '',
+    stk_pr_kolli: formData.get('stk_pr_kolli') || '',
+    stk_1_4_pl: formData.get('stk_1_4_pl') || '',
+    stk_1_2_pl: formData.get('stk_1_2_pl') || '',
+    stk_1_1_pl: formData.get('stk_1_1_pl') || '',
+    inkl_fragt: document.getElementById('inklFragt').checked,
+    bestil_interval: formData.get('bestil_interval') || '',
+    bestil_interval_unit: formData.get('bestil_interval_unit') || '',
     net_weight_grams: formData.get('net_weight_grams') || '',
     gross_weight_grams: formData.get('gross_weight_grams') || '',
     holdbarhed_months: formData.get('holdbarhed_months') || '',
