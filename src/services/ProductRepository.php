@@ -145,7 +145,8 @@ final class ProductRepository
             return null;
         }
 
-        $product['extra_data'] = $product['extra_data'] ? json_decode((string) $product['extra_data'], true) : [];
+        $decodedExtra = $product['extra_data'] ? json_decode((string) $product['extra_data'], true) : [];
+        $product['extra_data'] = $this->sanitizeDeprecatedExtraData(is_array($decodedExtra) ? $decodedExtra : []);
 
         return $product;
     }
@@ -408,9 +409,26 @@ final class ProductRepository
             return null;
         }
 
-        $product['extra_data'] = $product['extra_data'] ? json_decode((string) $product['extra_data'], true) : [];
+        $decodedExtra = $product['extra_data'] ? json_decode((string) $product['extra_data'], true) : [];
+        $product['extra_data'] = $this->sanitizeDeprecatedExtraData(is_array($decodedExtra) ? $decodedExtra : []);
 
         return $product;
+    }
+
+    private function sanitizeDeprecatedExtraData(array $extraData): array
+    {
+        $clean = [];
+
+        foreach ($extraData as $key => $value) {
+            $normalizedKey = $this->normalizeHeader((string) $key);
+            if (in_array($normalizedKey, self::REMOVED_EXTRA_FIELDS, true)) {
+                continue;
+            }
+
+            $clean[$key] = $value;
+        }
+
+        return $clean;
     }
 
     private function buildManagedMeta(array $normalized, ?array $existingProduct): array

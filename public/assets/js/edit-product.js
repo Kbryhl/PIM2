@@ -40,6 +40,14 @@ const removedLegacyExtraFields = new Set([
   'extra_folie_varianter',
 ]);
 
+function normalizeExtraKey(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function isRemovedLegacyExtraField(value) {
+  return removedLegacyExtraFields.has(normalizeExtraKey(value));
+}
+
 const knownFields = new Set([
   'active',
   'barcode',
@@ -464,7 +472,7 @@ function applyProductToForm(product) {
 
   dynamicFieldsContainer.innerHTML = '';
   for (const [key, value] of Object.entries(extra)) {
-    if (readOnlyExtraFields.has(key) || knownFields.has(key) || removedLegacyExtraFields.has(key)) {
+    if (readOnlyExtraFields.has(key) || knownFields.has(key) || isRemovedLegacyExtraField(key)) {
       continue;
     }
     addDynamicField(key, value);
@@ -563,7 +571,7 @@ form.addEventListener('submit', async (event) => {
 
   for (const input of dynamicFieldsContainer.querySelectorAll('input')) {
     const key = String(input.name || '').replace(/^extra_/, '');
-    if (!key || removedLegacyExtraFields.has(key)) continue;
+    if (!key || isRemovedLegacyExtraField(key) || isRemovedLegacyExtraField(`extra_${key}`)) continue;
     payload[key] = input.value;
   }
 
