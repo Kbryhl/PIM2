@@ -32,6 +32,14 @@ const readOnlyExtraFields = new Set([
   'datablad_url',
 ]);
 
+const removedLegacyExtraFields = new Set([
+  'extra_form_varianter',
+  'extra_finish',
+  'extra_sheet_name',
+  'extra_smagsvarianter',
+  'extra_folie_varianter',
+]);
+
 const knownFields = new Set([
   'active',
   'barcode',
@@ -456,7 +464,7 @@ function applyProductToForm(product) {
 
   dynamicFieldsContainer.innerHTML = '';
   for (const [key, value] of Object.entries(extra)) {
-    if (readOnlyExtraFields.has(key) || knownFields.has(key)) {
+    if (readOnlyExtraFields.has(key) || knownFields.has(key) || removedLegacyExtraFields.has(key)) {
       continue;
     }
     addDynamicField(key, value);
@@ -555,7 +563,7 @@ form.addEventListener('submit', async (event) => {
 
   for (const input of dynamicFieldsContainer.querySelectorAll('input')) {
     const key = String(input.name || '').replace(/^extra_/, '');
-    if (!key) continue;
+    if (!key || removedLegacyExtraFields.has(key)) continue;
     payload[key] = input.value;
   }
 

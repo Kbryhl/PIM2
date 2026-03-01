@@ -12,7 +12,6 @@
             <h1>PIM2</h1>
             <nav>
                 <a href="index.php">Products</a>
-                <a href="import.php" class="active">Import</a>
             </nav>
         </div>
     </header>

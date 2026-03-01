@@ -5,6 +5,13 @@ declare(strict_types=1);
 final class ProductRepository
 {
     private array $fieldMapping;
+    private const REMOVED_EXTRA_FIELDS = [
+        'extra_form_varianter',
+        'extra_finish',
+        'extra_sheet_name',
+        'extra_smagsvarianter',
+        'extra_folie_varianter',
+    ];
 
     public function __construct(private PDO $pdo)
     {
@@ -332,7 +339,7 @@ final class ProductRepository
 
         $extraData = [];
         foreach ($map as $key => $value) {
-            if (!isset($knownAliasKeys[$key])) {
+            if (!isset($knownAliasKeys[$key]) && !in_array($key, self::REMOVED_EXTRA_FIELDS, true)) {
                 $extraData[$key] = $value;
             }
         }

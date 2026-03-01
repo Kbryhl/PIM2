@@ -12,7 +12,6 @@
             <h1>PIM2</h1>
             <nav>
                 <a href="index.php" class="active">Products</a>
-                <a href="import.php">Import</a>
                 <a href="options-admin.php">Options Admin</a>
             </nav>
         </div>
