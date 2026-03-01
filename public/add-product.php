@@ -87,6 +87,18 @@
                     <button id="addBestilIntervalUnitBtn" type="button">Add Unit</button>
                 </div>
 
+                <label for="minOrdre">Min. ordre</label>
+                <input id="minOrdre" name="min_ordre" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="leveringstid">Leveringstid (hverdage)</label>
+                <input id="leveringstid" name="leveringstid" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="produktionstid">Produktionstid (hverdage)</label>
+                <input id="produktionstid" name="produktionstid" type="number" min="0" step="1" placeholder="0" />
+
+                <label for="leveringText">Levering (read only)</label>
+                <input id="leveringText" name="levering_text" type="text" readonly placeholder="X hverdage efter godkendt korrektur" />
+
                 <label for="netWeightGrams">Nettovægt (grams)</label>
                 <input id="netWeightGrams" name="net_weight_grams" type="number" min="0" step="1" placeholder="0" />
 

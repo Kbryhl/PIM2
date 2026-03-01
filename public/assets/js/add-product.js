@@ -8,6 +8,9 @@ const taraWeightInput = document.getElementById('taraWeightGrams');
 const skuInput = document.getElementById('sku');
 const holdbarhedMonthsInput = document.getElementById('holdbarhedMonths');
 const holdbarhedTextInput = document.getElementById('holdbarhedText');
+const leveringstidInput = document.getElementById('leveringstid');
+const produktionstidInput = document.getElementById('produktionstid');
+const leveringTextInput = document.getElementById('leveringText');
 const productPhotoUrlInput = document.getElementById('productPhotoUrl');
 const databladUrlInput = document.getElementById('databladUrl');
 const categorySelect = document.getElementById('categorySelect');
@@ -232,10 +235,23 @@ function updateSigdetsoedtAutoFields() {
   holdbarhedTextInput.value = Number.isFinite(months) && months > 0
     ? `ca. ${months} måneder, ved korrekt opbevaring`
     : '';
+
+  const leveringstid = Number(leveringstidInput.value || 0);
+  const produktionstid = Number(produktionstidInput.value || 0);
+  const hasLeveringstid = String(leveringstidInput.value || '').trim() !== '';
+  const hasProduktionstid = String(produktionstidInput.value || '').trim() !== '';
+  if (hasLeveringstid || hasProduktionstid) {
+    const sum = (Number.isFinite(leveringstid) ? leveringstid : 0) + (Number.isFinite(produktionstid) ? produktionstid : 0);
+    leveringTextInput.value = `${sum} hverdage efter godkendt korrektur`;
+  } else {
+    leveringTextInput.value = '';
+  }
 }
 
 skuInput.addEventListener('input', updateSigdetsoedtAutoFields);
 holdbarhedMonthsInput.addEventListener('input', updateSigdetsoedtAutoFields);
+leveringstidInput.addEventListener('input', updateSigdetsoedtAutoFields);
+produktionstidInput.addEventListener('input', updateSigdetsoedtAutoFields);
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -258,6 +274,9 @@ form.addEventListener('submit', async (event) => {
     inkl_fragt: document.getElementById('inklFragt').checked,
     bestil_interval: formData.get('bestil_interval') || '',
     bestil_interval_unit: formData.get('bestil_interval_unit') || '',
+    min_ordre: formData.get('min_ordre') || '',
+    leveringstid: formData.get('leveringstid') || '',
+    produktionstid: formData.get('produktionstid') || '',
     net_weight_grams: formData.get('net_weight_grams') || '',
     gross_weight_grams: formData.get('gross_weight_grams') || '',
     holdbarhed_months: formData.get('holdbarhed_months') || '',
@@ -300,6 +319,7 @@ form.addEventListener('submit', async (event) => {
     changeLogInput.value = String(result.data.change_log || 'Saved.');
     taraWeightInput.value = String(result.data.tara_weight_grams ?? taraWeightInput.value);
     holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? holdbarhedTextInput.value);
+    leveringTextInput.value = String(result.data.levering_text ?? leveringTextInput.value);
     productPhotoUrlInput.value = String(result.data.product_photo_url ?? productPhotoUrlInput.value);
     databladUrlInput.value = String(result.data.datablad_url ?? databladUrlInput.value);
 
@@ -324,6 +344,7 @@ form.addEventListener('submit', async (event) => {
     changeLogInput.value = String(result.data.change_log || 'Saved.');
     taraWeightInput.value = String(result.data.tara_weight_grams ?? '');
     holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? '');
+    leveringTextInput.value = String(result.data.levering_text ?? '');
     productPhotoUrlInput.value = String(result.data.product_photo_url ?? '');
     databladUrlInput.value = String(result.data.datablad_url ?? '');
   } catch (error) {

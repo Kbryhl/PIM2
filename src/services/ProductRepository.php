@@ -359,6 +359,9 @@ final class ProductRepository
             'inkl_fragt' => $this->pickMappedValue($map, $aliases, 'inkl_fragt'),
             'bestil_interval' => $this->pickMappedValue($map, $aliases, 'bestil_interval'),
             'bestil_interval_unit' => $this->pickMappedValue($map, $aliases, 'bestil_interval_unit'),
+            'min_ordre' => $this->pickMappedValue($map, $aliases, 'min_ordre'),
+            'leveringstid' => $this->pickMappedValue($map, $aliases, 'leveringstid'),
+            'produktionstid' => $this->pickMappedValue($map, $aliases, 'produktionstid'),
             'net_weight_grams' => $this->pickMappedValue($map, $aliases, 'net_weight_grams'),
             'gross_weight_grams' => $this->pickMappedValue($map, $aliases, 'gross_weight_grams'),
             'holdbarhed_months' => $this->pickMappedValue($map, $aliases, 'holdbarhed_months'),
@@ -411,6 +414,10 @@ final class ProductRepository
         $inklFragt = $this->toBooleanFlag($normalized['inkl_fragt'] ?? null);
         $bestilInterval = $this->toNullableInt($normalized['bestil_interval'] ?? null);
         $bestilIntervalUnit = $this->toNullableString($normalized['bestil_interval_unit'] ?? null);
+        $minOrdre = $this->toNullableInt($normalized['min_ordre'] ?? null);
+        $leveringstid = $this->toNullableInt($normalized['leveringstid'] ?? null);
+        $produktionstid = $this->toNullableInt($normalized['produktionstid'] ?? null);
+        $leveringText = $this->buildLeveringText($leveringstid, $produktionstid);
         $netWeight = $this->toNullableInt($normalized['net_weight_grams'] ?? null);
         $grossWeight = $this->toNullableInt($normalized['gross_weight_grams'] ?? null);
         $taraWeight = $this->calculateTara($grossWeight, $netWeight);
@@ -444,6 +451,10 @@ final class ProductRepository
             'inkl_fragt' => $inklFragt,
             'bestil_interval' => $bestilInterval,
             'bestil_interval_unit' => $bestilIntervalUnit,
+            'min_ordre' => $minOrdre,
+            'leveringstid' => $leveringstid,
+            'produktionstid' => $produktionstid,
+            'levering_text' => $leveringText,
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
@@ -477,6 +488,10 @@ final class ProductRepository
             'inkl_fragt' => $inklFragt,
             'bestil_interval' => $bestilInterval,
             'bestil_interval_unit' => $bestilIntervalUnit,
+            'min_ordre' => $minOrdre,
+            'leveringstid' => $leveringstid,
+            'produktionstid' => $produktionstid,
+            'levering_text' => $leveringText,
             'net_weight_grams' => $netWeight,
             'gross_weight_grams' => $grossWeight,
             'tara_weight_grams' => $taraWeight,
@@ -520,6 +535,10 @@ final class ProductRepository
             'inkl_fragt' => $this->toNullableInt($extra['inkl_fragt'] ?? null),
             'bestil_interval' => $this->toNullableInt($extra['bestil_interval'] ?? null),
             'bestil_interval_unit' => $this->toNullableString($extra['bestil_interval_unit'] ?? null),
+            'min_ordre' => $this->toNullableInt($extra['min_ordre'] ?? null),
+            'leveringstid' => $this->toNullableInt($extra['leveringstid'] ?? null),
+            'produktionstid' => $this->toNullableInt($extra['produktionstid'] ?? null),
+            'levering_text' => $this->toNullableString($extra['levering_text'] ?? null),
             'net_weight_grams' => $this->toNullableInt($extra['net_weight_grams'] ?? null),
             'gross_weight_grams' => $this->toNullableInt($extra['gross_weight_grams'] ?? null),
             'tara_weight_grams' => $this->toNullableInt($extra['tara_weight_grams'] ?? null),
@@ -560,6 +579,10 @@ final class ProductRepository
             'inkl_fragt' => 'Inkl. Fragt',
             'bestil_interval' => 'Bestil Interval',
             'bestil_interval_unit' => 'Bestil Interval enhed',
+            'min_ordre' => 'Min. ordre',
+            'leveringstid' => 'Leveringstid',
+            'produktionstid' => 'Produktionstid',
+            'levering_text' => 'Levering',
             'net_weight_grams' => 'Nettovægt',
             'gross_weight_grams' => 'Bruttovægt',
             'tara_weight_grams' => 'Tara Weight',
@@ -640,6 +663,17 @@ final class ProductRepository
         }
 
         return 'ca. ' . $months . ' måneder, ved korrekt opbevaring';
+    }
+
+    private function buildLeveringText(?int $leveringstid, ?int $produktionstid): ?string
+    {
+        if ($leveringstid === null && $produktionstid === null) {
+            return null;
+        }
+
+        $sum = max(0, (int) ($leveringstid ?? 0)) + max(0, (int) ($produktionstid ?? 0));
+
+        return $sum . ' hverdage efter godkendt korrektur';
     }
 
     private function buildSigdetsoedtAssetUrl(?string $sku, string $folder, string $extension): ?string

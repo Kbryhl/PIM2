@@ -67,6 +67,15 @@ return [
         'bestil_interval_unit' => [
             'bestil_interval_unit', 'bestil interval enhed', 'order_interval_unit',
         ],
+        'min_ordre' => [
+            'min_ordre', 'min ordre', 'minimum_order', 'minimum ordre',
+        ],
+        'leveringstid' => [
+            'leveringstid', 'levering_tid', 'delivery_time',
+        ],
+        'produktionstid' => [
+            'produktionstid', 'produktion_tid', 'production_time',
+        ],
         'net_weight_grams' => [
             'net_weight_grams', 'nettovaegt', 'nettovægt', 'netto_weight', 'netto_vaegt', 'net_weight',
         ],
@@ -135,6 +144,9 @@ return [
             'inkl_fragt' => ['sigdetsoedt_inkl_fragt', 'inkl_fragt', 'inkl fragt'],
             'bestil_interval' => ['sigdetsoedt_bestil_interval', 'bestil_interval', 'bestil interval'],
             'bestil_interval_unit' => ['sigdetsoedt_bestil_interval_unit', 'bestil_interval_unit', 'bestil interval enhed'],
+            'min_ordre' => ['sigdetsoedt_min_ordre', 'min_ordre', 'min ordre'],
+            'leveringstid' => ['sigdetsoedt_leveringstid', 'leveringstid', 'levering tid'],
+            'produktionstid' => ['sigdetsoedt_produktionstid', 'produktionstid', 'produktion tid'],
             'net_weight_grams' => ['sigdetsoedt_nettovaegt', 'nettovaegt', 'net_weight_grams'],
             'gross_weight_grams' => ['sigdetsoedt_bruttovaegt', 'bruttovaegt', 'gross_weight_grams'],
             'holdbarhed_months' => ['sigdetsoedt_holdbarhed', 'holdbarhed_months', 'holdbarhed'],

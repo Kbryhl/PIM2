@@ -45,6 +45,10 @@ const knownFields = new Set([
   'inkl_fragt',
   'bestil_interval',
   'bestil_interval_unit',
+  'min_ordre',
+  'leveringstid',
+  'produktionstid',
+  'levering_text',
   'net_weight_grams',
   'gross_weight_grams',
   'holdbarhed_months',
@@ -60,6 +64,9 @@ const taraWeightInput = document.getElementById('taraWeightGrams');
 const skuInput = document.getElementById('sku');
 const holdbarhedMonthsInput = document.getElementById('holdbarhedMonths');
 const holdbarhedTextInput = document.getElementById('holdbarhedText');
+const leveringstidInput = document.getElementById('leveringstid');
+const produktionstidInput = document.getElementById('produktionstid');
+const leveringTextInput = document.getElementById('leveringText');
 const productPhotoUrlInput = document.getElementById('productPhotoUrl');
 const databladUrlInput = document.getElementById('databladUrl');
 const changeLogInput = document.getElementById('changeLog');
@@ -294,6 +301,17 @@ function updateCalculatedReadOnlyFields() {
     ? `ca. ${months} måneder, ved korrekt opbevaring`
     : '';
 
+  const leveringstid = Number(leveringstidInput.value || 0);
+  const produktionstid = Number(produktionstidInput.value || 0);
+  const hasLeveringstid = String(leveringstidInput.value || '').trim() !== '';
+  const hasProduktionstid = String(produktionstidInput.value || '').trim() !== '';
+  if (hasLeveringstid || hasProduktionstid) {
+    const sum = (Number.isFinite(leveringstid) ? leveringstid : 0) + (Number.isFinite(produktionstid) ? produktionstid : 0);
+    leveringTextInput.value = `${sum} hverdage efter godkendt korrektur`;
+  } else {
+    leveringTextInput.value = '';
+  }
+
   const sku = String(skuInput.value || '').trim();
   const encodedSku = encodeURIComponent(sku);
   productPhotoUrlInput.value = sku
@@ -307,6 +325,8 @@ function updateCalculatedReadOnlyFields() {
 netWeightInput.addEventListener('input', updateCalculatedReadOnlyFields);
 grossWeightInput.addEventListener('input', updateCalculatedReadOnlyFields);
 holdbarhedMonthsInput.addEventListener('input', updateCalculatedReadOnlyFields);
+leveringstidInput.addEventListener('input', updateCalculatedReadOnlyFields);
+produktionstidInput.addEventListener('input', updateCalculatedReadOnlyFields);
 skuInput.addEventListener('input', updateCalculatedReadOnlyFields);
 
 function addDynamicField(name, value) {
@@ -367,6 +387,9 @@ function applyProductToForm(product) {
   document.getElementById('stkFullPl').value = String(extra.stk_1_1_pl ?? '');
   document.getElementById('inklFragt').checked = toBoolean(extra.inkl_fragt ?? false);
   document.getElementById('bestilInterval').value = String(extra.bestil_interval ?? '');
+  document.getElementById('minOrdre').value = String(extra.min_ordre ?? '');
+  document.getElementById('leveringstid').value = String(extra.leveringstid ?? '');
+  document.getElementById('produktionstid').value = String(extra.produktionstid ?? '');
   document.getElementById('netWeightGrams').value = String(extra.net_weight_grams ?? '');
   document.getElementById('grossWeightGrams').value = String(extra.gross_weight_grams ?? '');
   document.getElementById('holdbarhedMonths').value = String(extra.holdbarhed_months ?? '');
@@ -396,6 +419,9 @@ function applyProductToForm(product) {
   }
   if (extra.holdbarhed_text !== undefined && extra.holdbarhed_text !== null) {
     holdbarhedTextInput.value = String(extra.holdbarhed_text);
+  }
+  if (extra.levering_text !== undefined && extra.levering_text !== null) {
+    leveringTextInput.value = String(extra.levering_text);
   }
   if (extra.product_photo_url !== undefined && extra.product_photo_url !== null) {
     productPhotoUrlInput.value = String(extra.product_photo_url);
@@ -446,6 +472,9 @@ form.addEventListener('submit', async (event) => {
     inkl_fragt: document.getElementById('inklFragt').checked,
     bestil_interval: formData.get('bestil_interval') || '',
     bestil_interval_unit: formData.get('bestil_interval_unit') || '',
+    min_ordre: formData.get('min_ordre') || '',
+    leveringstid: formData.get('leveringstid') || '',
+    produktionstid: formData.get('produktionstid') || '',
     net_weight_grams: formData.get('net_weight_grams') || '',
     gross_weight_grams: formData.get('gross_weight_grams') || '',
     holdbarhed_months: formData.get('holdbarhed_months') || '',
@@ -494,6 +523,9 @@ form.addEventListener('submit', async (event) => {
     }
     if (result.data.holdbarhed_text !== undefined) {
       holdbarhedTextInput.value = String(result.data.holdbarhed_text ?? '');
+    }
+    if (result.data.levering_text !== undefined) {
+      leveringTextInput.value = String(result.data.levering_text ?? '');
     }
     if (result.data.product_photo_url !== undefined) {
       productPhotoUrlInput.value = String(result.data.product_photo_url ?? '');
